@@ -8,7 +8,7 @@ int main() {
 
     Canvas canvas;
     GLRenderer renderer(canvas);
-    renderer.setClearColor(Color::aliceblue);
+    renderer.setClearColor(Color::black);
 
     auto camera = PerspectiveCamera::create();
     camera->position.z = 5;
