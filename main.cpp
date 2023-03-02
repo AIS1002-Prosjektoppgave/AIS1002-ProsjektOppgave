@@ -1,73 +1,98 @@
-
+#include <memory>
 #include "threepp/threepp.hpp"
 #include "threepp/extras/imgui/imgui_context.hpp"
 
 using namespace threepp;
 
-int main() {
+class Chessboard {
+public:
+    Chessboard(std::shared_ptr<Canvas> canvas, std::shared_ptr<GLRenderer> renderer,
+               std::shared_ptr<PerspectiveCamera> camera) :
+            canvas_(std::move(canvas)), renderer_(std::move(renderer)), camera_(std::move(camera)) {
+        init();
+    }
 
-    Canvas canvas;
-    GLRenderer renderer(canvas);
-    renderer.setClearColor(Color::black);
+    void init() {
+        // Create the chessboard mesh
+        auto whiteGeometry = BoxGeometry::create(8, 0.2, 8);
+        auto whiteMaterial = MeshBasicMaterial::create();
+        whiteMaterial->color = Color::white;
+        auto whiteMesh = Mesh::create(whiteGeometry, whiteMaterial);
+        whiteMesh->position.y = -0.1;
+        scene_.add(whiteMesh);
+
+        auto blackGeometry = BoxGeometry::create(1, 0.2, 1);
+        auto blackMaterial = MeshBasicMaterial::create();
+        blackMaterial->color = Color::black;
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if ((i + j) % 2 == 0) {
+                    auto blackMesh = Mesh::create(blackGeometry, blackMaterial);
+                    blackMesh->position.x = i - 3.5;
+                    blackMesh->position.y = -0.09;
+                    blackMesh->position.z = j - 3.5;
+                    scene_.add(blackMesh);
+                }
+            }
+        }
+
+
+        // Add the chess pieces
+        // ...
+
+        // Set up the UI
+        imgui_context_ = std::make_unique<imgui_functional_context>(
+                canvas_->window_ptr(), [this] {
+                    ImGui::Begin("Chessboard");
+                    ImGui::Text("Chessboard Controls:");
+                    ImGui::Checkbox("Enable Controls", &controls_enabled_);
+                    ImGui::End();
+                });
+
+        // Set up the event listeners
+        canvas_->onWindowResize([this](WindowSize size){
+            camera_->aspect = size.getAspect();
+            camera_->updateProjectionMatrix();
+            renderer_->setSize(size);
+        });
+
+        canvas_->animate([this] {
+            // Render the scene
+            renderer_->render(&scene_, camera_.get());
+
+
+            // Update the chess pieces
+            // ...
+
+            // Update the controls
+            controls_.enabled = controls_enabled_;
+
+            // Render the UI
+            imgui_context_->render();
+        });
+    }
+
+private:
+    std::shared_ptr<Canvas> canvas_;
+    std::shared_ptr<GLRenderer> renderer_;
+    std::shared_ptr<PerspectiveCamera> camera_;
+    Scene scene_;
+    std::unique_ptr<imgui_functional_context> imgui_context_;
+    OrbitControls controls_{camera_, *canvas_};
+    bool controls_enabled_ = true;
+};
+
+int main() {
+    auto canvas = std::make_shared<Canvas>();
+    auto renderer = std::make_shared<GLRenderer>(*canvas);
+    renderer->setClearColor(Color::gray);
 
     auto camera = PerspectiveCamera::create();
-    camera->position.z = 5;
+    camera->position.y = 5;
+    camera->position.z = 10;
 
-    OrbitControls controls{camera, canvas};
+    auto chessboard = std::make_unique<Chessboard>(std::move(canvas), std::move(renderer), std::move(camera));
 
-    auto scene = Scene::create();
-
-    auto group = Group::create();
-    scene->add(group);
-
-    {
-        auto geometry = BoxGeometry::create();
-        auto material = MeshBasicMaterial::create();
-        material->color = Color::green;
-        auto mesh = Mesh::create(geometry, material);
-        mesh->position.x = -1;
-        group->add(mesh);
-    }
-
-    {
-        auto geometry = BoxGeometry::create();
-        auto material = MeshBasicMaterial::create();
-        material->color = Color::blue;
-        auto mesh = Mesh::create(geometry, material);
-        mesh->position.x = 1;
-        group->add(mesh);
-    }
-
-    renderer.enableTextRendering();
-    auto& textHandle = renderer.textHandle("Hello World");
-    textHandle.setPosition(0, canvas.getSize().height-30);
-    textHandle.scale = 2;
-
-
-    std::array<float, 3> posBuf{};
-    imgui_functional_context ui(canvas.window_ptr(), [&] {
-        ImGui::SetNextWindowPos({0, 0}, 0, {0, 0});
-        ImGui::SetNextWindowSize({230, 0}, 0);
-        ImGui::Begin("Demo");
-        ImGui::SliderFloat3("position", posBuf.data(), -1.f, 1.f);
-        controls.enabled = !ImGui::IsWindowHovered();
-        ImGui::End();
-    });
-
-    canvas.onWindowResize([&](WindowSize size){
-        camera->aspect = size.getAspect();
-        camera->updateProjectionMatrix();
-        renderer.setSize(size);
-        textHandle.setPosition(0, size.height-30);
-    });
-
-    canvas.animate([&] {
-
-        renderer.render(scene, camera);
-
-        ui.render();
-        group->position.fromArray(posBuf);
-
-    });
-
+    return 0;
 }
