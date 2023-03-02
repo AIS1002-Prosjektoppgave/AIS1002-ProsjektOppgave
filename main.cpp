@@ -1,7 +1,2 @@
-#include "chessBoardGeometry.h"
-#include "chessPiecesGeometry.h"
+#include "example.h"
 
-int main() {
-    SceneRenderer renderer;
-    return 0;
-}
