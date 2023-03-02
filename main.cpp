@@ -2,6 +2,7 @@
 #include "threepp/threepp.hpp"
 #include "threepp/extras/imgui/imgui_context.hpp"
 
+
 using namespace threepp;
 
 class Chessboard {
@@ -39,7 +40,67 @@ public:
 
 
         // Add the chess pieces
-        // ...
+#include <threepp/threepp.hpp>
+
+        class PawnGeometry : public BufferGeometry {
+        public:
+            PawnGeometry() : threepp::BufferGeometry() {
+                const float height = 1.5f;
+                const float radiusTop = 0.5f;
+                const float radiusBottom = 1.0f;
+                const int radialSegments = 16;
+
+                // create top and bottom vertices
+                Float32Array topVertices((radialSegments + 1) * 3);
+                Float32Array bottomVertices((radialSegments + 1) * 3);
+                for (int i = 0; i <= radialSegments; i++) {
+                    float theta = i * (M_PI * 2 / radialSegments);
+                    float x = sin(theta);
+                    float z = cos(theta);
+
+                    topVertices[i * 3] = x * radiusTop;
+                    topVertices[i * 3 + 1] = height / 2;
+                    topVertices[i * 3 + 2] = z * radiusTop;
+
+                    bottomVertices[i * 3] = x * radiusBottom;
+                    bottomVertices[i * 3 + 1] = -height / 2;
+                    bottomVertices[i * 3 + 2] = z * radiusBottom;
+                }
+
+                // create indices for top and bottom faces
+                Uint16Array topIndices(radialSegments * 3);
+                Uint16Array bottomIndices(radialSegments * 3);
+                for (int i = 0; i < radialSegments; i++) {
+                    topIndices[i * 3] = 0;
+                    topIndices[i * 3 + 1] = i + 1;
+                    topIndices[i * 3 + 2] = i + 2;
+
+                    bottomIndices[i * 3] = radialSegments + 1;
+                    bottomIndices[i * 3 + 1] = i + 2 + radialSegments;
+                    bottomIndices[i * 3 + 2] = i + 1 + radialSegments;
+                }
+                topIndices[radialSegments * 3 - 1] = 1;
+                bottomIndices[radialSegments * 3 - 1] = radialSegments + 2;
+
+                // set attributes and indices
+                setAttribute("position", FloatBufferAttribute::create(topVertices.concatenate(bottomVertices), 3));
+                setIndex(IntBufferAttribute::create(topIndices.concatenate(bottomIndices), 1));
+            }
+        };
+
+
+        auto pawnGeometry = PawnGeometry::create(); // use the `create` function to create an instance of the `PawnGeometry` class
+        auto pawnMaterial = MeshStandardMaterial::create();
+        pawnMaterial->color = Color::white;
+        auto pawnMesh = Mesh::create(pawnGeometry, pawnMaterial);
+        pawnMesh->position = Vector3(-3.5, 0.25, -3.5);
+        scene_.add(pawnMesh);
+
+
+
+
+
+
 
         // Set up the UI
         imgui_context_ = std::make_unique<imgui_functional_context>(
