@@ -1,12 +1,11 @@
-//
 // Created by Kevin Silbernagel on 02/03/2023.
 //
 
 #ifndef THREEPP_VCPKG_TEST_CHESSBOARDGEOMETRY_H
 #define THREEPP_VCPKG_TEST_CHESSBOARDGEOMETRY_H
 
-#endif //THREEPP_VCPKG_TEST_CHESSBOARDGEOMETRY_H
 #include <memory>
+#include "chessPiecesGeometry.h"
 #include "threepp/threepp.hpp"
 #include "threepp/extras/imgui/imgui_context.hpp"
 
@@ -49,9 +48,13 @@ public:
 
         // Add the chess pieces
 
+        auto pawn = ChessPiecesGeometry::createPawn();
+        pawn->setPosition(0, 0.5, 0);
+        scene_.add(pawn->getMesh());
+
         // Set up the UI
         imgui_context_ = std::make_unique<imgui_functional_context>(
-                canvas_->window_ptr(), [this] {
+                canvas_->window(), [this] {
                     ImGui::Begin("Chessboard");
                     ImGui::Text("Chessboard Controls:");
                     ImGui::Checkbox("Enable Controls", &controls_enabled_);
@@ -59,13 +62,13 @@ public:
                 });
 
         // Set up the event listeners
-        canvas_->onWindowResize([this](WindowSize size) {
-            camera_->aspect = size.getAspect();
+        canvas_->onResize([this](WindowSize size) {
+            camera_->setAspect(size.getAspect());
             camera_->updateProjectionMatrix();
             renderer_->setSize(size);
         });
 
-        canvas_->animate([this] {
+        canvas_->animate([this](float deltaTime) {
             // Render the scene
             renderer_->render(&scene_, camera_.get());
 
@@ -74,36 +77,30 @@ public:
             // ...
 
             // Update the controls
-            controls_.enabled = controls_enabled_;
+            controls_.setEnabled(controls_enabled_);
+            controls_.update(deltaTime);
 
             // Render the UI
             imgui_context_->render();
         });
     }
 
+    threepp::Scene& getScene() {
+        return scene_;
+    }
+
 private:
     std::shared_ptr<Canvas> canvas_;
     std::shared_ptr<GLRenderer> renderer_;
     std::shared_ptr<PerspectiveCamera> camera_;
-    Scene scene_;
+    threepp::Scene scene_;
     std::unique_ptr<imgui_functional_context> imgui_context_;
     OrbitControls controls_{camera_, *canvas_};
     bool controls_enabled_ = true;
 };
 
+#endif
 
 /* int main() {
     auto canvas = std::make_shared<Canvas>();
-    auto renderer = std::make_shared<GLRenderer>(*canvas);
-    renderer->setClearColor(Color::gray);
-
-    auto camera = PerspectiveCamera::create();
-    camera->position.y = 5;
-    camera->position.z = 10;
-
-    auto chessboard = std::make_unique<Chessboard>(std::move(canvas), std::move(renderer), std::move(camera));
-
-    return 0;
-}
-*/
-
+    auto renderer = std::make_shared<GLRenderer
