@@ -1,16 +1,17 @@
 //
 // Created by Kevin Silbernagel on 02/03/2023.
 //
-
 #ifndef EXAMPLE_H
 #define EXAMPLE_H
 
 #include <memory>
 #include "threepp/threepp.hpp"
+#include <threepp/textures/Texture.hpp>
+#include <threepp/materials/MeshStandardMaterial.hpp>
+
 
 using namespace threepp;
 
-test
 class Knight {
 public:
     Knight() {
@@ -169,6 +170,7 @@ private:
 };
 
 
+
 class Queen {
 public:
     Queen() {
@@ -222,17 +224,3 @@ private:
 
 
 #endif //EXAMPLE_H
-
-/* int main() {
-    auto canvas = std::make_shared<Canvas>();
-    auto renderer = std::make_shared<GLRenderer>(*canvas);
-    renderer->setClearColor(Color::gray);
-
-    auto camera = PerspectiveCamera::create();
-    camera->position.z = 3;
-
-    auto cube = std::make_unique<Cube>(std::move(canvas), std::move(renderer), std::move(camera));
-
-    return 0;
-}
-*/

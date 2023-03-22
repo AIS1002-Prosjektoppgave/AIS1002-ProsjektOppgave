@@ -1,8 +1,8 @@
 #include "example.h"
 #include "chessBoardGeometry.h"
+#include "Mouse.h"
 
 using namespace threepp;
-test
 int main() {
 
     auto canvas = std::make_shared<Canvas>();

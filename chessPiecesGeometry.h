@@ -3,7 +3,6 @@
 
 #include <memory>
 
-test
 using namespace threepp;
 
 
