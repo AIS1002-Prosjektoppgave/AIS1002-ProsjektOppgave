@@ -1,6 +1,7 @@
 //
 // Created by Kevin Silbernagel on 02/03/2023.
 //
+/*
 #ifndef EXAMPLE_H
 #define EXAMPLE_H
 
@@ -224,3 +225,151 @@ private:
 
 
 #endif //EXAMPLE_H
+ #include "threepp/threepp.hpp"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+#include <iostream>
+#include <vector>
+
+using namespace threepp;
+
+std::shared_ptr<BufferGeometry> loadStl(const std::string &filename) {
+    Assimp::Importer importer;
+    const aiScene *scene = importer.ReadFile(filename, aiProcess_Triangulate);
+
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+        std::cerr << "Failed to load STL file: " << importer.GetErrorString() << std::endl;
+        exit(1);
+    }
+
+    aiMesh *mesh = scene->mMeshes[0];
+
+    std::vector<float> vertices;
+    std::vector<int> indices;
+
+    vertices.reserve(mesh->mNumVertices * 3);
+    for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
+        vertices.push_back(mesh->mVertices[i].x);
+        vertices.push_back(mesh->mVertices[i].y);
+        vertices.push_back(mesh->mVertices[i].z);
+    }
+
+    indices.reserve(mesh->mNumFaces * 3);
+    for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
+        aiFace face = mesh->mFaces[i];
+        for (unsigned int j = 0; j < face.mNumIndices; ++j) {
+            indices.push_back(face.mIndices[j]);
+        }
+    }
+
+    auto geometry = BufferGeometry::create();
+    geometry->setAttribute("position", FloatBufferAttribute::create(vertices, 3));
+    geometry->setIndex(IntBufferAttribute::create(indices, 1));
+
+    return geometry;
+}
+
+int main() {
+    Canvas canvas;
+    GLRenderer renderer(canvas);
+    renderer.setClearColor(Color(0x808080));
+
+    auto camera = PerspectiveCamera::create();
+    camera->position.set(0, 0, 1);
+    camera->lookAt(Vector3(0, 0, 0));
+
+    OrbitControls controls{camera, canvas};
+
+    auto scene = Scene::create();
+
+    auto geometry = loadStl("/Users/kevinsilbernagel/CLionProjects/AIS1002-ProsjektOppgave/Knight.stl");
+
+    auto material = MeshBasicMaterial::create();
+    material->color = Color(0xffffff);
+    auto mesh = Mesh::create(geometry, material);
+    mesh->scale.set(0.01, 0.01, 0.01);
+    scene->add(mesh);
+
+    canvas.onWindowResize([&](WindowSize size) {
+        camera->aspect = size.getAspect();
+        camera->updateProjectionMatrix();
+        renderer.setSize(size);
+    });
+
+    canvas.animate([&] {
+        renderer.render(scene, camera);
+    });
+
+    return 0;
+}
+
+*/
+#include "ChessboardGeometry.h"
+#include "chessPiecesGeometry.h"
+#include "threepp/threepp.hpp"
+#include "threepp/extras/imgui/imgui_context.hpp"
+
+using namespace threepp;
+
+int main() {
+
+    Canvas canvas;
+    GLRenderer renderer(canvas);
+    renderer.setClearColor(Color(0x708090));
+
+    auto camera = PerspectiveCamera::create();
+    camera->position.set(0, 20, 20);
+    camera->lookAt(Vector3());
+
+    OrbitControls controls{camera, canvas};
+
+    auto scene = Scene::create();
+
+    auto chessboard = ChessboardGeometry::create();
+    scene->add(chessboard);
+
+    auto directionalLight = DirectionalLight::create(0xffffff, 0.5);
+    directionalLight->position.set(1, 1, 1);
+    scene->add(directionalLight);
+
+    auto ambientLight = AmbientLight::create(0x404040);
+    scene->add(ambientLight);
+
+    std::vector<std::shared_ptr<ChessPiece>> pieces = {
+            std::make_shared<Pawn>(),
+            std::make_shared<Rook>(),
+            std::make_shared<Knight>(),
+            std::make_shared<Bishop>(),
+            std::make_shared<Queen>(),
+            std::make_shared<King>(),
+    };
+
+    for (size_t i = 0; i < pieces.size(); ++i) {
+        pieces[i]->mesh()->position.set(-3 + i * 1.5, 0.1, -4);
+        scene->add(pieces[i]->mesh());
+    }
+
+    imgui_functional_context ui(canvas.window_ptr(), [&] {
+        ImGui::SetNextWindowPos({0, 0}, 0, {0, 0});
+        ImGui::SetNextWindowSize({230, 0}, 0);
+        ImGui::Begin("Chess Controls");
+        controls.enabled = !ImGui::IsWindowHovered();
+        ImGui::Text("Press ESC to exit");
+        ImGui::End();
+    });
+
+    canvas.onWindowResize([&](WindowSize size) {
+        camera->aspect = size.getAspect();
+        camera->updateProjectionMatrix();
+        renderer.setSize(size);
+    });
+
+    canvas.animate([&] {
+        renderer.render(scene, camera);
+        ui.render();
+    });
+
+    return 0;
+}
