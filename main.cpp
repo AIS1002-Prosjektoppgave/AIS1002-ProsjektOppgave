@@ -1,6 +1,7 @@
 #include "ChessboardGeometry.h"
 #include "chessPiecesGeometry.h"
 #include "threepp/threepp.hpp"
+#include "threepp/controls/OrbitControls.hpp"
 #include "threepp/extras/imgui/imgui_context.hpp"
 
 using namespace threepp;
@@ -224,12 +225,11 @@ int main() {
     scene->add(blackPawn8->getMesh());
 
 
-
     imgui_functional_context ui(canvas.window_ptr(), [&] {
-        ImGui::SetNextWindowPos({0, 0}, 0, {0, 0});
-        ImGui::SetNextWindowSize({230, 0}, 0);
+        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always, ImVec2(0, 0));
+        ImGui::SetNextWindowSize(ImVec2(230, 0), ImGuiCond_Always);
         ImGui::Begin("Chess Controls");
-        controls.enabled = !ImGui::IsWindowHovered();
+        controls.enabled = !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
         ImGui::Text("Press ESC to exit");
         ImGui::End();
     });
@@ -244,5 +244,9 @@ int main() {
         renderer.render(scene, camera);
         ui.render();
     });
+
     return 0;
 }
+
+
+
