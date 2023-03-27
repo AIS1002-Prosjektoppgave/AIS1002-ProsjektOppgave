@@ -71,72 +71,72 @@ namespace ChessPiecesGeometry {
     // Class for creating a white pawn geometry
     class WhitePawn : public ChessPieceGeometry {
     public:
-        WhitePawn() : ChessPieceGeometry("/Users/kevinsilbernagel/CLionProjects/AIS1002-ProsjektOppgave/Pawn.stl", threepp::Color(0xffffff)) {}
+        WhitePawn() : ChessPieceGeometry("models/Pawn.stl", threepp::Color(0xffffff)) {}
     };
 
     // Class for creating a black pawn geometry
     class BlackPawn : public ChessPieceGeometry {
     public:
-        BlackPawn() : ChessPieceGeometry("/Users/kevinsilbernagel/CLionProjects/AIS1002-ProsjektOppgave/Pawn.stl", threepp::Color(0x000000)) {}
+        BlackPawn() : ChessPieceGeometry("models/Pawn.stl", threepp::Color(0x000000)) {}
     };
     // Class for creating a white queen geometry
     class WhiteQueen : public ChessPieceGeometry {
     public:
-        WhiteQueen() : ChessPieceGeometry("/Users/kevinsilbernagel/CLionProjects/AIS1002-ProsjektOppgave/Queen.stl", threepp::Color(0xffffff)) {}
+        WhiteQueen() : ChessPieceGeometry("models/Queen.stl", threepp::Color(0xffffff)) {}
     };
 
 // Class for creating a black queen geometry
     class BlackQueen : public ChessPieceGeometry {
     public:
-        BlackQueen() : ChessPieceGeometry("/Users/kevinsilbernagel/CLionProjects/AIS1002-ProsjektOppgave/Queen.stl", threepp::Color(0x000000)) {}
+        BlackQueen() : ChessPieceGeometry("models/Queen.stl", threepp::Color(0x000000)) {}
     };
 
 // Class for creating a white king geometry
     class WhiteKing : public ChessPieceGeometry {
     public:
-        WhiteKing() : ChessPieceGeometry("/Users/kevinsilbernagel/CLionProjects/AIS1002-ProsjektOppgave/King.stl", threepp::Color(0xffffff)) {}
+        WhiteKing() : ChessPieceGeometry("models/King.STL", threepp::Color(0xffffff)) {}
     };
 
 // Class for creating a black king geometry
     class BlackKing : public ChessPieceGeometry {
     public:
-        BlackKing() : ChessPieceGeometry("/Users/kevinsilbernagel/CLionProjects/AIS1002-ProsjektOppgave/King.stl", threepp::Color(0x000000)) {}
+        BlackKing() : ChessPieceGeometry("models/King.STL", threepp::Color(0x000000)) {}
     };
 
 // Class for creating a white bishop geometry
     class WhiteBishop : public ChessPieceGeometry {
     public:
-        WhiteBishop() : ChessPieceGeometry("/Users/kevinsilbernagel/CLionProjects/AIS1002-ProsjektOppgave/Bishop.stl", threepp::Color(0xffffff)) {}
+        WhiteBishop() : ChessPieceGeometry("models/Bishop.STL", threepp::Color(0xffffff)) {}
     };
 
 // Class for creating a black bishop geometry
     class BlackBishop : public ChessPieceGeometry {
     public:
-        BlackBishop() : ChessPieceGeometry("/Users/kevinsilbernagel/CLionProjects/AIS1002-ProsjektOppgave/Bishop.stl", threepp::Color(0x000000)) {}
+        BlackBishop() : ChessPieceGeometry("models/Bishop.STL", threepp::Color(0x000000)) {}
     };
 
 // Class for creating a white knight geometry
     class WhiteKnight : public ChessPieceGeometry {
     public:
-        WhiteKnight() : ChessPieceGeometry("/Users/kevinsilbernagel/CLionProjects/AIS1002-ProsjektOppgave/Knight.stl", threepp::Color(0xffffff)) {}
+        WhiteKnight() : ChessPieceGeometry("models/Knight.STL", threepp::Color(0xffffff)) {}
     };
 
 // Class for creating a black knight geometry
     class BlackKnight : public ChessPieceGeometry {
     public:
-        BlackKnight() : ChessPieceGeometry("/Users/kevinsilbernagel/CLionProjects/AIS1002-ProsjektOppgave/Knight.stl", threepp::Color(0x000000)) {}
+        BlackKnight() : ChessPieceGeometry("models/Knight.STL", threepp::Color(0x000000)) {}
     };
 
 // Class for creating a white rook geometry
     class WhiteRook : public ChessPieceGeometry {
     public:
-        WhiteRook() : ChessPieceGeometry("/Users/kevinsilbernagel/CLionProjects/AIS1002-ProsjektOppgave/Rook.stl", threepp::Color(0xffffff)) {}
+        WhiteRook() : ChessPieceGeometry("models/Rook.STL", threepp::Color(0xffffff)) {}
     };
 
 // Class for creating a black rook geometry
     class BlackRook : public ChessPieceGeometry {
     public:
-        BlackRook() : ChessPieceGeometry("/Users/kevinsilbernagel/CLionProjects/AIS1002-ProsjektOppgave/Rook.stl", threepp::Color(0x000000)) {}
+        BlackRook() : ChessPieceGeometry("models/Rook.stl", threepp::Color(0x000000)) {}
     };
 };
 
