@@ -27,7 +27,7 @@ int main() {
     OrbitControls controls(camera, canvas);
     controls.enablePan = false;
     controls.enableZoom = false;
-    controls.enableRotate = false;
+    controls.enableRotate = true;
 
     auto chessboard = ChessboardGeometry::create();
     chessboard->name = "chessboard";
