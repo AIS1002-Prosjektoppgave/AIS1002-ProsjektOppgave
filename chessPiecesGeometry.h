@@ -19,6 +19,7 @@ namespace ChessPiecesGeometry {
             material_ = threepp::MeshBasicMaterial::create();
             material_->color = color;
             mesh_ = threepp::Mesh::create(geometry_, material_);
+            mesh_->name = "chess_piece";
             mesh_->scale.set(0.01, 0.01, 0.01);
         }
 
@@ -138,6 +139,6 @@ namespace ChessPiecesGeometry {
     public:
         BlackRook() : ChessPieceGeometry("models/Rook.stl", threepp::Color(0x000000)) {}
     };
-};
+}
 
 #endif //THREEPP_VCPKG_TEST_CHESSPIECESGEOMETRY_H
