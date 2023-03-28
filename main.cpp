@@ -1,11 +1,13 @@
 #include "controls.h"
 #include "chessPiecesGeometry.h"
 #include "threepp/threepp.hpp"
-#include <threepp/controls/OrbitControls.hpp>
+#include "threepp/controls/OrbitControls.hpp"
 #include "threepp/extras/imgui/imgui_context.hpp"
 
 using namespace threepp;
 
+//Her legges det til posisjonene for sjakkbrikkene samt at det opprettes en scene med forskjllige kontroll innstillinger
+//Det er også inkludert en headeren controls.h for å legge til sjakkbrikke kontrollen
 int main() {
 
     Canvas canvas;
@@ -25,6 +27,7 @@ int main() {
     OrbitControls controls(camera, canvas);
     controls.enablePan = false;
     controls.enableZoom = false;
+    controls.enableRotate = false;
 
     auto chessboard = ChessboardGeometry::create();
     chessboard->name = "chessboard";
@@ -265,6 +268,8 @@ int main() {
     scene->add(blackPawn8->getMesh());
 
 
+
+
     imgui_functional_context ui(canvas.window_ptr(), [&] {
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always, ImVec2(0, 0));
         ImGui::SetNextWindowSize(ImVec2(230, 0), ImGuiCond_Always);
@@ -279,13 +284,13 @@ int main() {
         explicit MyListener(std::shared_ptr<Controls> controlsPtr) : controlsPtr(std::move(controlsPtr)) {}
 
         void onMouseDown(int button, const Vector2 &pos) override {
-            if (button == 0) { // Left mouse button
+            if (button == 0) { // Venstre mus knapp
                 controlsPtr->onMouseDown(pos);
             }
         };
 
         void onMouseUp(int button, const Vector2 &pos) override {
-            if (button != 0) { // Left mouse button
+            if (button != 0) { // Ventre mus knapp
                 controlsPtr->onMouseUp();
             }
         }
@@ -305,7 +310,7 @@ int main() {
     });
 
     canvas.animate([&] {
-        controls.update(); // Update the OrbitControls
+        controls.update();
         renderer.render(scene, camera);
     });
 

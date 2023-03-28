@@ -2,11 +2,11 @@
 #define THREEPP_VCPKG_TEST_CHESSBOARDGEOMETRY_H
 
 #include "threepp/threepp.hpp"
-#include <vector>
+#include "vector"
 
 using namespace threepp;
 
-
+//Sjakkbrett geometri
 class ChessboardGeometry {
 public:
     static std::shared_ptr<Object3D> create() {
@@ -19,14 +19,14 @@ public:
         auto whiteMesh = Mesh::create(whiteGeometry, whiteMaterial);
         whiteMesh->position.y = 0;
 
-        // Create white border mesh
+        // De hvite feltene for sjekkbrettet
         auto borderGeometry = BoxGeometry::create(8.01, 0.2, 8.01); // add thickness of +0.01
         auto borderMaterial = MeshBasicMaterial::create();
         borderMaterial->color = Color(0xd2b48c);
         auto borderMesh = Mesh::create(borderGeometry, borderMaterial);
         borderMesh->position.y = 0.111;
 
-        // Add empty space within the border
+        // Lager en tom boks for å få til fine kanter på sjakkbrettet
         auto emptyGeometry = BoxGeometry::create(7.8, 0.2, 7.8);
         auto emptyMaterial = MeshBasicMaterial::create();
         emptyMaterial->color = Color::white;
@@ -34,6 +34,7 @@ public:
         emptyMesh->position.y = 0.11;
         whiteMesh->add(emptyMesh);
 
+        // Lager de svarte feltene på sjakkbrettet
         auto blackGeometry = BoxGeometry::create(1, 0.2, 1);
         auto blackMaterial = MeshBasicMaterial::create();
         blackMaterial->color = Color(0x5D5346);

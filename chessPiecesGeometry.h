@@ -2,16 +2,16 @@
 #define THREEPP_VCPKG_TEST_CHESSPIECESGEOMETRY_H
 
 #include "threepp/threepp.hpp"
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
 
-#include <iostream>
-#include <vector>
+#include "iostream"
+#include "vector"
 
 namespace ChessPiecesGeometry {
 
-    // Base class for creating chess piece geometries
+    // Dinna classen oppretter geometrien for sjakkbrikkene og sjakkbrettet
     class ChessPieceGeometry {
     public:
         ChessPieceGeometry(const std::string& filename, const threepp::Color& color) {
@@ -69,75 +69,75 @@ namespace ChessPiecesGeometry {
         }
     };
 
-    // Class for creating a white pawn geometry
+    // Denne klassen legger til sjakkbrikken: hvit bonde
     class WhitePawn : public ChessPieceGeometry {
     public:
-        WhitePawn() : ChessPieceGeometry("models/Pawn.stl", threepp::Color(0xffffff)) {}
+        WhitePawn() : ChessPieceGeometry("Pawn.stl", threepp::Color(0xffffff)) {}
     };
 
-    // Class for creating a black pawn geometry
+    // Denne klassen legger til sjakkbrikken: svarte bonde
     class BlackPawn : public ChessPieceGeometry {
     public:
-        BlackPawn() : ChessPieceGeometry("models/Pawn.stl", threepp::Color(0x000000)) {}
+        BlackPawn() : ChessPieceGeometry("Pawn.stl", threepp::Color(0x000000)) {}
     };
-    // Class for creating a white queen geometry
+    // Denne klassen legger til sjakkbrikken: hvit dronning
     class WhiteQueen : public ChessPieceGeometry {
     public:
-        WhiteQueen() : ChessPieceGeometry("models/Queen.stl", threepp::Color(0xffffff)) {}
+        WhiteQueen() : ChessPieceGeometry("Queen.stl", threepp::Color(0xffffff)) {}
     };
 
-// Class for creating a black queen geometry
+// Denne klassen legger til sjakkbrikken: svart dronning
     class BlackQueen : public ChessPieceGeometry {
     public:
-        BlackQueen() : ChessPieceGeometry("models/Queen.stl", threepp::Color(0x000000)) {}
+        BlackQueen() : ChessPieceGeometry("Queen.stl", threepp::Color(0x000000)) {}
     };
 
-// Class for creating a white king geometry
+// Denne klassen legger til sjakkbrikken: hvit konge
     class WhiteKing : public ChessPieceGeometry {
     public:
-        WhiteKing() : ChessPieceGeometry("models/King.STL", threepp::Color(0xffffff)) {}
+        WhiteKing() : ChessPieceGeometry("King.STL", threepp::Color(0xffffff)) {}
     };
 
-// Class for creating a black king geometry
+// Denne klassen legger til sjakkbrikken: svart konge
     class BlackKing : public ChessPieceGeometry {
     public:
-        BlackKing() : ChessPieceGeometry("models/King.STL", threepp::Color(0x000000)) {}
+        BlackKing() : ChessPieceGeometry("King.STL", threepp::Color(0x000000)) {}
     };
 
-// Class for creating a white bishop geometry
+// Denne klassen legger til sjakkbrikken: hvit løper
     class WhiteBishop : public ChessPieceGeometry {
     public:
-        WhiteBishop() : ChessPieceGeometry("models/Bishop.STL", threepp::Color(0xffffff)) {}
+        WhiteBishop() : ChessPieceGeometry("Bishop.STL", threepp::Color(0xffffff)) {}
     };
 
-// Class for creating a black bishop geometry
+// Denne klassen legger til sjakkbrikken: svart løper
     class BlackBishop : public ChessPieceGeometry {
     public:
-        BlackBishop() : ChessPieceGeometry("models/Bishop.STL", threepp::Color(0x000000)) {}
+        BlackBishop() : ChessPieceGeometry("Bishop.STL", threepp::Color(0x000000)) {}
     };
 
-// Class for creating a white knight geometry
+// Denne klassen legger til sjakkbrikken: hvit hest
     class WhiteKnight : public ChessPieceGeometry {
     public:
-        WhiteKnight() : ChessPieceGeometry("models/Knight.STL", threepp::Color(0xffffff)) {}
+        WhiteKnight() : ChessPieceGeometry("Knight.STL", threepp::Color(0xffffff)) {}
     };
 
-// Class for creating a black knight geometry
+// Denne klassen legger til sjakkbrikken: svart hest
     class BlackKnight : public ChessPieceGeometry {
     public:
-        BlackKnight() : ChessPieceGeometry("models/Knight.STL", threepp::Color(0x000000)) {}
+        BlackKnight() : ChessPieceGeometry("Knight.STL", threepp::Color(0x000000)) {}
     };
 
-// Class for creating a white rook geometry
+// Denne klassen legger til sjakkbrikken: hvit tårn
     class WhiteRook : public ChessPieceGeometry {
     public:
-        WhiteRook() : ChessPieceGeometry("models/Rook.STL", threepp::Color(0xffffff)) {}
+        WhiteRook() : ChessPieceGeometry("Rook.STL", threepp::Color(0xffffff)) {}
     };
 
-// Class for creating a black rook geometry
+// Denne klassen legger til sjakkbrikken: svart tårn
     class BlackRook : public ChessPieceGeometry {
     public:
-        BlackRook() : ChessPieceGeometry("models/Rook.stl", threepp::Color(0x000000)) {}
+        BlackRook() : ChessPieceGeometry("Rook.STL", threepp::Color(0x000000)) {}
     };
 }
 
