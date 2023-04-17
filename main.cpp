@@ -1,5 +1,5 @@
-#include "controls.h"
 #include "chessPiecesGeometry.h"
+#include "controls.h"
 #include "threepp/threepp.hpp"
 #include "threepp/controls/OrbitControls.hpp"
 #include "threepp/extras/imgui/imgui_context.hpp"
@@ -16,7 +16,7 @@ int main() {
     renderer.setClearColor(Color(0x708090));
 
     auto camera = PerspectiveCamera::create();
-    camera->position.set(0, 10, 5);
+    camera->position.set(0, 10, 0);
     camera->layers.enableAll();
 
     auto scene = Scene::create();
@@ -26,7 +26,7 @@ int main() {
 
     OrbitControls controls(camera, canvas);
     controls.enablePan = false;
-    controls.enableZoom = false;
+    controls.enableZoom = true;
     controls.enableRotate = true;
 
     auto chessboard = ChessboardGeometry::create();
@@ -46,6 +46,7 @@ int main() {
     whiteRook1->getMesh()->position.set(-6.4, 0.1, -3.5);
     whiteRook1->getMesh()->scale.set(0.015, 0.015, 0.015);
     whiteRook1->getMesh()->rotation.set(math::PI/-2, 0, 0);
+
 
     auto whiteRook2 = std::make_shared<ChessPiecesGeometry::WhiteRook>();
     whiteRook2->getMesh()->name = "chess_piece_white_rook_2";
@@ -233,14 +234,14 @@ int main() {
     blackPawn8->getMesh()->scale.set(0.015, 0.015, 0.015);
     blackPawn8->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    scene->add(whiteKing->getMesh());
-    scene->add(whiteQueen->getMesh());
-    scene->add(whiteRook1->getMesh());
-    scene->add(whiteRook2->getMesh());
-    scene->add(whiteKnight1->getMesh());
-    scene->add(whiteKnight2->getMesh());
-    scene->add(whiteBishop1->getMesh());
-    scene->add(whiteBishop2->getMesh());
+    scene->add(blackPawn1->getMesh());
+    scene->add(blackPawn2->getMesh());
+    scene->add(blackPawn3->getMesh());
+    scene->add(blackPawn4->getMesh());
+    scene->add(blackPawn5->getMesh());
+    scene->add(blackPawn6->getMesh());
+    scene->add(blackPawn7->getMesh());
+    scene->add(blackPawn8->getMesh());
     scene->add(whitePawn1->getMesh());
     scene->add(whitePawn2->getMesh());
     scene->add(whitePawn3->getMesh());
@@ -258,17 +259,14 @@ int main() {
     scene->add(blackKnight2->getMesh());
     scene->add(blackBishop1->getMesh());
     scene->add(blackBishop2->getMesh());
-    scene->add(blackPawn1->getMesh());
-    scene->add(blackPawn2->getMesh());
-    scene->add(blackPawn3->getMesh());
-    scene->add(blackPawn4->getMesh());
-    scene->add(blackPawn5->getMesh());
-    scene->add(blackPawn6->getMesh());
-    scene->add(blackPawn7->getMesh());
-    scene->add(blackPawn8->getMesh());
-
-
-
+    scene->add(whiteRook1->getMesh());
+    scene->add(whiteRook2->getMesh());
+    scene->add(whiteKnight1->getMesh());
+    scene->add(whiteKnight2->getMesh());
+    scene->add(whiteBishop1->getMesh());
+    scene->add(whiteBishop2->getMesh());
+    scene->add(whiteKing->getMesh());
+    scene->add(whiteQueen->getMesh());
 
     imgui_functional_context ui(canvas.window_ptr(), [&] {
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always, ImVec2(0, 0));
@@ -300,10 +298,20 @@ int main() {
         }
     };
 
-    MyListener l{controlsPtr};
-    canvas.addMouseListener(&l);
+    Vector2 mouse{-Infinity<float>, -Infinity<float>};
+    MouseMoveListener l([&](Vector2 pos) {
+        auto size = canvas.getSize();
+        mouse.x = (pos.x / static_cast<float>(size.width)) * 2 - 1;
+        mouse.y = -(pos.y / static_cast<float>(size.height)) * 2 + 1;
+    });
+
+    MyListener k{controlsPtr};
+    canvas.addMouseListener(&k);
+
+    Raycaster raycaster;
 
     canvas.onWindowResize([&](WindowSize size) {
+        raycaster.setFromCamera(mouse, camera);
         camera->aspect = size.getAspect();
         camera->updateProjectionMatrix();
         renderer.setSize(size);
