@@ -49,6 +49,18 @@ public:
         return board;
     }
 
+    static Vector3 getNearestSquare(const Vector3 &position) {
+        // Find the nearest square on the chessboard for the given position.
+        float squareSize = 1.0f; // Adjust this value to match your actual chessboard square size.
+        float halfSquareSize = squareSize / 2.0f;
+        float boardSize = 8 * squareSize;
+
+        float x = std::round((position.x + boardSize / 2.0f - halfSquareSize) / squareSize) * squareSize - boardSize / 2.0f + halfSquareSize;
+        float z = std::round((position.z + boardSize / 2.0f - halfSquareSize) / squareSize) * squareSize - boardSize / 2.0f + halfSquareSize;
+
+        return Vector3(x, position.y, z);
+    }
+
     static std::map<std::string, std::shared_ptr<Mesh>> chessSquares;
 };
 

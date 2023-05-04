@@ -13,6 +13,9 @@
 #include "vector"
 #include "threepp/math/Vector3.hpp"
 #include "threepp/cameras/PerspectiveCamera.hpp"
+#include "threepp/core/BufferGeometry.hpp"
+#include "threepp/core/BufferAttribute.hpp"
+
 
 using namespace threepp;
 
@@ -37,10 +40,15 @@ public:
                 }
             }
         }
+        auto lineGeometry = BufferGeometry::create();
+        auto lineMaterial = LineBasicMaterial::create();
+        lineMaterial->color = Color(0xff0000);
+        rayLine_ = Line::create(lineGeometry, lineMaterial);
+        rayLine_->visible = true; // Set the visibility to true in the constructor
+        scene_->add(rayLine_);
+        updateRaycasterLine();
     }
 
-
-    std::shared_ptr<Mesh> selectedMesh_ = nullptr;
     Mesh *selectedRawMesh_ = nullptr;
 
     Vector2 normalizeMouseCoordinates(const Vector2 &mousePosition) {
@@ -51,7 +59,22 @@ public:
         return normalized;
     }
 
-        void update() {
+    void updateRaycasterLine() {
+        auto raycaster = std::make_shared<Raycaster>();
+        raycaster->setFromCamera(mousePosition_, camera_);
+        auto positions = std::vector<float>{
+                raycaster->ray.origin.x,
+                raycaster->ray.origin.y,
+                raycaster->ray.origin.z,
+                (raycaster->ray.origin + raycaster->ray.direction * 100.f).x,
+                (raycaster->ray.origin + raycaster->ray.direction * 100.f).y,
+                (raycaster->ray.origin + raycaster->ray.direction * 100.f).z
+        };
+        std::unique_ptr<threepp::BufferAttribute> positionAttribute = std::unique_ptr<threepp::BufferAttribute>(FloatBufferAttribute::create(positions, 3).release());
+        rayLine_->geometry()->setAttribute("position", std::move(positionAttribute));
+    }
+
+    void update() {
         if (selectedRawMesh_) {
             Vector3 newPosition = selectedMeshOriginalPosition_ + dragOffset_;
             selectedRawMesh_->position.lerp(newPosition, 0.1);
@@ -59,114 +82,67 @@ public:
     }
 
 
+    void resetSelectedPieceState() {
+        selectedRawMesh_ = nullptr;
+        selectDestination_ = false;
+    }
+
     void onMouseDown(const Vector2 &mousePosition) {
         mouseDown_ = true;
         mousePosition_ = normalizeMouseCoordinates(mousePosition);
+
+        updateRaycasterLine();
 
         auto normalizedMousePosition = normalizeMouseCoordinates(mousePosition);
         auto raycaster = std::make_shared<Raycaster>();
         raycaster->setFromCamera(normalizedMousePosition, camera_);
         auto intersects = raycaster->intersectObjects(scene_->children, true);
 
+        threepp::Mesh *intersectedPiece = nullptr;
+        threepp::Mesh *intersectedSquare = nullptr;
+
         for (const auto& intersection : intersects) {
-            std::cout << "Intersected object name: " << intersection.object->name << std::endl;
-        }
-        for (const auto& intersection : intersects) {
-            std::cout << "Intersected object type: " << typeid(*intersection.object).name() << std::endl;
-            std::cout << "Intersected object position: (" << intersection.object->position.x << ", " << intersection.object->position.y << ", " << intersection.object->position.z << ")" << std::endl;
-            std::cout << "Intersected object name: " << intersection.object->name << " position: (" << intersection.object->position.x << ", " << intersection.object->position.y << ", " << intersection.object->position.z << ")" << std::endl;
-        }
-
-
-        if (!intersects.empty()) {
-            std::string squareName;
-            if (auto mesh = dynamic_cast<threepp::Mesh *>(intersects[0].object)) {
-                squareName = mesh->name;
-            }
-            if (!squareName.empty() && squareName.find("square") != std::string::npos) {
-                if (!selectDestination_) {
-                    std::string chessPieceName;
-                    for (const auto &object : scene_->children) {
-                        if (auto mesh = dynamic_cast<threepp::Mesh *>(object.get())) {
-                            if (mesh->name.find("chess_piece") != std::string::npos) {
-                                std::cout << "Piece: " << mesh->name << ", position: (" << mesh->position.x << ", " << mesh->position.y << ", " << mesh->position.z << ")" << std::endl;
-                                std::cout << "Intersected square position: (" << intersects[0].point.x << ", " << intersects[0].point.y << ", " << intersects[0].point.z << ")" << std::endl;
-                                if (mesh->position.x == intersects[0].point.x &&
-                                    mesh->position.z == intersects[0].point.z) {
-                                    chessPieceName = mesh->name;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    const float threshold = 0.1;
-
-                    for (const auto &object : scene_->children) {
-                        if (auto mesh = dynamic_cast<threepp::Mesh *>(object.get())) {
-                            if (mesh->name.find("chess_piece") != std::string::npos) {
-                                std::cout << "Piece: " << mesh->name << ", position: (" << mesh->position.x << ", " << mesh->position.y << ", " << mesh->position.z << ")" << std::endl;
-                                std::cout << "Intersected square position: (" << intersects[0].point.x << ", " << intersects[0].point.y << ", " << intersects[0].point.z << ")" << std::endl;
-                                if (mesh->position.distanceTo(intersects[0].point) < threshold) {
-                                    chessPieceName = mesh->name;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-
-
-
-                } else {
-// Move the selected chess piece to the square
-                    threepp::Vector3 newPosition(intersects[0].point.x, selectedRawMesh_->position.y, intersects[0].point.z);
-                    moveSelectedMeshTo(newPosition);
-                    std::cout << "Moved mesh " << selectedRawMesh_->name << " to the new position" << std::endl;
-                    selectedRawMesh_ = nullptr;
-                    selectDestination_ = false;
+            if (auto mesh = dynamic_cast<threepp::Mesh*>(intersection.object)) {
+                if (mesh->name.find("chess_piece") != std::string::npos) {
+                    intersectedPiece = mesh;
+                    break;
+                } else if (mesh->name.find("square") != std::string::npos) {
+                    intersectedSquare = mesh;
                 }
             }
         }
+
+        if (intersectedPiece) {
+            if (selectedRawMesh_ && selectDestination_) {
+                if (intersectedPiece != selectedRawMesh_) {
+                    resetSelectedPieceState();
+                }
+            }
+            else {
+                selectedRawMesh_ = intersectedPiece;
+                selectedMeshOriginalPosition_ = intersectedPiece->position;
+                selectDestination_ = true;
+                selectedRawMesh_->position.y += 5.f;
+            }
+        }
+        else if (intersectedSquare && selectDestination_) {
+            ChessboardGeometry cbg;
+            Vector3 nearestSquarePosition = cbg.getNearestSquare(intersectedSquare->position);
+            moveSelectedMeshTo(nearestSquarePosition);
+            std::cout << "Moved mesh " << selectedRawMesh_->name << " to the new position" << std::endl;
+            resetSelectedPieceState();
+        } else {
+            resetSelectedPieceState();
+        }
     }
+
+
     void moveSelectedMeshTo(const threepp::Vector3 &newPosition) {
         if (selectedRawMesh_) {
-            selectedRawMesh_->position.set(newPosition.x, newPosition.y, newPosition.z);
+            selectedRawMesh_->position.set(newPosition.x, selectedMeshOriginalPosition_.y, newPosition.z);
         }
     }
 
-    void onMouseMove(const Vector2 &mousePosition) {
-        if (!selectedRawMesh_ || !mouseDown_) return;
-
-        auto normalizedMousePosition = normalizeMouseCoordinates(mousePosition);
-        auto raycaster = std::make_shared<Raycaster>();
-        raycaster->setFromCamera(normalizedMousePosition, camera_);
-
-        auto intersection = getIntersection(normalizedMousePosition);
-        if (intersection) {
-            auto newPosition = intersection->point;
-            newPosition.y = selectedRawMesh_->position.y;
-            moveSelectedMeshTo(newPosition);
-        }
-    }
-
-    void onMouseUp() {
-        if (mouseDown_ && selectedRawMesh_) {
-            mouseDown_ = false;
-            auto normalizedMousePosition = normalizeMouseCoordinates(mousePosition_);
-            auto intersection = getIntersection(normalizedMousePosition);
-            if (intersection) {
-                threepp::Vector3 newPosition(intersection->point.x, selectedRawMesh_->position.y, intersection->point.z);
-                moveSelectedMeshTo(newPosition);
-                std::cout << "Released mesh " << selectedRawMesh_->name << " at new position" << std::endl;
-            } else {
-                // Move the mesh back to its original position
-                selectedRawMesh_->position.set(selectedMeshOriginalPosition_.x, selectedMeshOriginalPosition_.y, selectedMeshOriginalPosition_.z);
-                std::cout << "Released mesh " << selectedRawMesh_->name << " at original position" << std::endl;
-            }
-            selectedRawMesh_ = nullptr;
-            selectDestination_ = false;
-        }
-    }
 
 private:
     std::shared_ptr<threepp::Line> rayLine_;
@@ -177,17 +153,9 @@ private:
     bool mouseDown_ = false;
     Vector2 mousePosition_;
     Vector3 dragOffset_;
-    bool selectDestination_ = false;
     std::shared_ptr<Object3D> selectedPiece = nullptr;
     Vector3 selectedMeshOriginalPosition_;
-    std::optional<Intersection> getIntersection(const Vector2 &normalizedMousePosition) {
-        auto raycaster = std::make_shared<Raycaster>();
-        raycaster->setFromCamera(normalizedMousePosition, camera_);
-        auto intersects = raycaster->intersectObjects(scene_->children, true);
-        if (!intersects.empty()) {
-            return intersects[0];
-        }
-        return std::nullopt;
-    }
+    bool selectDestination_ = false;
+
 };
 #endif //THREEPP_VCPKG_TEST_CONTROLS_H

@@ -44,18 +44,16 @@ int main() {
     auto whitePawn1 = std::make_shared<ChessPiecesGeometry::WhitePawn>();
     // Set the name for the white pawn
     whitePawn1->getMesh()->name = "chess_piece_white_pawn_1";
-    whitePawn1->getMesh()->position.set(3.5, 0, -2.5);
+    whitePawn1->getMesh()->position.set(0, 0, -2.5);
     whitePawn1->getMesh()->scale.set(0.015, 0.015, 0.015);
     whitePawn1->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
 // Find the mesh with the corresponding name and add the white pawn mesh as its child
-// Remove these lines
     auto squareMesh = ChessboardGeometry::chessSquares.find("H2")->second;
     squareMesh->add(whitePawn1->getMesh());
 
 // Add the white pawn mesh directly to the scene
     scene->add(whitePawn1->getMesh());
-
 
 
     imgui_functional_context ui(canvas.window_ptr(), [&] {
@@ -67,32 +65,43 @@ int main() {
     });
 
     struct MyListener : MouseListener {
+
+        std::map<std::string, std::string> chessPiecePositions;
         std::shared_ptr<Controls> controlsPtr;
         std::shared_ptr<threepp::Scene> scene_;
         std::shared_ptr<threepp::Camera> listenerCamera_;
+        std::shared_ptr<Canvas> listenerCanvas_;
+        std::shared_ptr<threepp::Object3D> pickedChessPiece;
+
+        std::string getSquareName(int column, int row) {
+            const std::vector<char> columnNames{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
+            return std::string(1, columnNames[column]) + std::to_string(8 - row);
+        }
+
 
         // Modify the constructor to accept scene and camera
-        explicit MyListener(std::shared_ptr<Controls> controlsPtr, std::shared_ptr<threepp::Scene> scene, std::shared_ptr<threepp::Camera> camera)
-                : controlsPtr(std::move(controlsPtr)), scene_(std::move(scene)), listenerCamera_(std::move(camera)) {}
+        explicit MyListener(std::shared_ptr<Controls> controlsPtr, std::shared_ptr<threepp::Scene> scene, std::shared_ptr<threepp::Camera> camera, std::shared_ptr<Canvas> canvas)
+                : controlsPtr(std::move(controlsPtr)), scene_(std::move(scene)), listenerCamera_(std::move(camera)), listenerCanvas_(std::move(canvas)) {
+            chessPiecePositions["H2"] = "chess_piece_white_pawn_1";
+        }
 
         void onMouseDown(int button, const Vector2 &pos) override {
             if (button == 0) { // Left mouse button
                 controlsPtr->onMouseDown(pos);
 
-                // New code snippet
-                Raycaster raycaster;
-                raycaster.setFromCamera(pos, listenerCamera_);
-
-                std::vector<Intersection> intersects = raycaster.intersectObjects(scene_->children, true);
+                auto normalizedMousePosition = controlsPtr->normalizeMouseCoordinates(pos);
+                auto raycaster = std::make_shared<Raycaster>();
+                raycaster->setFromCamera(normalizedMousePosition, listenerCamera_);
+                auto intersects = raycaster->intersectObjects(scene_->children, true);
 
                 if (!intersects.empty()) {
-                    processMouseClick(intersects[0], listenerCamera_, scene_);
+                    const auto& intersection = intersects.front();
+                    processMouseClick(intersection, listenerCamera_, scene_);
                 }
             }
-        };
+        }
 
-// Moved onMouseClick function definition outside of onMouseDown
-        void processMouseClick(Intersection &intersect, std::shared_ptr<threepp::Camera> &camera_, std::shared_ptr<threepp::Scene> &scene_) {
+        void processMouseClick(const Intersection &intersect, std::shared_ptr<threepp::Camera> &camera_, std::shared_ptr<threepp::Scene> &scene_) {
             std::cout << "Intersected object name: " << intersect.object->name << std::endl;
 
             const int gridSize = 8;
@@ -101,43 +110,56 @@ int main() {
             const float boardStartZ = -3.5;
 
             // Calculate the index of the intersected square
-            int intersectedColumn = static_cast<int>((intersect.point.x - boardStartX) / squareSize);
-            int intersectedRow = static_cast<int>((intersect.point.z - boardStartZ) / squareSize);
+            int intersectedColumn = static_cast<int>(std::round((intersect.point.x - boardStartX) / squareSize));
+            int intersectedRow = static_cast<int>(std::round((intersect.point.z - boardStartZ) / squareSize));
             int intersectedIndex = intersectedRow * gridSize + intersectedColumn;
+            std::cout << "Intersected index: " << intersectedIndex << std::endl;
 
             std::string chessPieceName;
 
-            // Find the chess piece on the board
-            for (const auto &object : scene_->children) {
-                if (auto mesh = dynamic_cast<threepp::Mesh *>(object.get())) {
-                    if (mesh->name.find("chess_piece") != std::string::npos) {
-                        int pieceColumn = static_cast<int>((mesh->position.x - boardStartX) / squareSize);
-                        int pieceRow = static_cast<int>((mesh->position.z - boardStartZ) / squareSize);
-                        int pieceIndex = pieceRow * gridSize + pieceColumn;
-
-                        if (pieceIndex == intersectedIndex) {
-                            chessPieceName = mesh->name;
-                            break;
-                        }
-                    }
+            // Find the chess piece in the chessPiecePositions map
+            std::function<void(std::shared_ptr<threepp::Object3D>)> findChessPiece = [this, &chessPieceName](std::shared_ptr<threepp::Object3D> object) mutable {
+                auto it = chessPiecePositions.find(object->name);
+                if (it != chessPiecePositions.end()) {
+                    chessPieceName = it->second;
                 }
-            }
+            };
+
+            auto intersectObjectSharedPtr = std::shared_ptr<threepp::Object3D>(intersect.object, [](threepp::Object3D *) {});
+            findChessPiece(intersectObjectSharedPtr);
 
             std::cout << "Chess piece on the intersected square: " << chessPieceName << std::endl;
-        }
 
+            if (!pickedChessPiece) {
+                // If there is no picked chess piece, pick up the chess piece on the intersected square
+                if (!chessPieceName.empty()) {
+                    pickedChessPiece = std::shared_ptr<threepp::Object3D>(scene_->getObjectByName(chessPieceName), [](threepp::Object3D *) {});
+                    // Raise the picked chess piece to make it "invisible"
+                    pickedChessPiece->position.y += 10;
 
-        explicit MyListener(std::shared_ptr<Controls> controlsPtr) : controlsPtr(std::move(controlsPtr)) {}
-
-
-        void onMouseUp(int button, const Vector2 &pos) override {
-            if (button != 0) { // Ventre mus knapp
-                controlsPtr->onMouseUp();
+                    // Remove the picked chess piece from the chessPiecePositions map
+                    std::string currentSquare = getSquareName(intersectedColumn, intersectedRow);
+                    chessPiecePositions.erase(currentSquare);
+                }
             }
-        }
+            else {
+                // If there is a picked chess piece, place it on the intersected square
+                float targetX = boardStartX + intersectedColumn * squareSize - 3.5;
+                float targetZ = boardStartZ + intersectedRow * squareSize;
+                pickedChessPiece->position.x = targetX;
+                pickedChessPiece->position.z = targetZ;
 
-        void onMouseMove(const Vector2 &pos) override {
-            controlsPtr->onMouseMove(pos);
+                // Lower the picked chess piece back to its original height
+                pickedChessPiece->position.y -= 10;
+
+                // Update the chessPiecePositions map
+                std::string targetSquare = getSquareName(intersectedColumn, intersectedRow);
+                chessPiecePositions[targetSquare] = pickedChessPiece->name;
+
+                // Clear the picked chess piece
+                pickedChessPiece.reset();
+            }
+
         }
     };
 
@@ -148,13 +170,10 @@ int main() {
         mouse.y = -(pos.y / static_cast<float>(size.height)) * 2 + 1;
     });
 
-    MyListener k{controlsPtr, scene, camera};
+    MyListener k(controlsPtr, scene, camera, std::shared_ptr<Canvas>(&canvas, [](Canvas*){}));
     canvas.addMouseListener(&k);
 
-    Raycaster raycaster;
-
     canvas.onWindowResize([&](WindowSize size) {
-        raycaster.setFromCamera(mouse, camera);
         camera->aspect = size.getAspect();
         camera->updateProjectionMatrix();
         renderer.setSize(size);
@@ -162,16 +181,6 @@ int main() {
 
     canvas.animate([&] {
         controlsPtr->update();
-        controls.update();
-        renderer.render(scene, camera);
-    });
-
-    std::cout << "All objects in the scene:" << std::endl;
-    for (const auto& object : scene->children) {
-        std::cout << "Object name: " << object->name << " position: (" << object->position.x << ", " << object->position.y << ", " << object->position.z << ")" << std::endl;
-    }
-
-    canvas.animate([&] {
         controls.update();
         renderer.render(scene, camera);
     });
