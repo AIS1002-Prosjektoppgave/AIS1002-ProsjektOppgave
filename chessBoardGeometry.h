@@ -1,7 +1,7 @@
 #ifndef THREEPP_VCPKG_TEST_CHESSBOARDGEOMETRY_H
 #define THREEPP_VCPKG_TEST_CHESSBOARDGEOMETRY_H
 
-#include "threepp/threepp.hpp"
+#include <threepp/threepp.hpp>
 
 using namespace threepp;
 

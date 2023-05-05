@@ -2,19 +2,19 @@
 #define THREEPP_VCPKG_TEST_CONTROLS_H
 
 #include "chessBoardGeometry.h"
-#include "threepp/controls/OrbitControls.hpp"
-#include "threepp/threepp.hpp"
-#include "functional"
-#include "threepp/core/Raycaster.hpp"
-#include "threepp/objects/Mesh.hpp"
-#include "threepp/Canvas.hpp"
-#include "memory"
-#include "iostream"
-#include "vector"
-#include "threepp/math/Vector3.hpp"
-#include "threepp/cameras/PerspectiveCamera.hpp"
-#include "threepp/core/BufferGeometry.hpp"
-#include "threepp/core/BufferAttribute.hpp"
+#include <threepp/controls/OrbitControls.hpp>
+#include <threepp/threepp.hpp>
+#include <functional>
+#include <threepp/core/Raycaster.hpp>
+#include <threepp/objects/Mesh.hpp>
+#include <threepp/Canvas.hpp>
+#include <memory>
+#include <iostream>
+#include <vector>
+#include <threepp/math/Vector3.hpp>
+#include <threepp/cameras/PerspectiveCamera.hpp>
+#include <threepp/core/BufferGeometry.hpp>
+#include <threepp/core/BufferAttribute.hpp>
 
 
 using namespace threepp;
