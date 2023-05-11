@@ -34,16 +34,17 @@ public:
 
     static bool isValidPawnMove(const std::string &initialSquare, const std::string &targetSquare, const std::map<std::string, std::string> &chessPiecePositions, bool isWhite) {
         int rankDirection = isWhite ? 1 : -1;
-        int rankMove = (targetSquare[1] - initialSquare[1]) * rankDirection;
+        int rankMove = ((targetSquare[1] - '0') - (initialSquare[1] - '0')) * rankDirection;
         int fileMove = std::abs(targetSquare[0] - initialSquare[0]);
 
         if (rankMove == 1 && fileMove == 0) {
             bool isWhiteTmp;
-            return !isSquareOccupied(targetSquare, chessPiecePositions, isWhiteTmp);
+            return !(isSquareOccupied(targetSquare, chessPiecePositions, isWhiteTmp) && isWhiteTmp == isWhite);
         } else if (rankMove == 2 && fileMove == 0 && (isWhite ? initialSquare[1] == '2' : initialSquare[1] == '7')) {
             std::string middleSquare = initialSquare.substr(0, 1) + static_cast<char>(initialSquare[1] + rankDirection);
             bool isWhiteTmp;
-            return !isSquareOccupied(middleSquare, chessPiecePositions, isWhiteTmp) && !isSquareOccupied(targetSquare, chessPiecePositions, isWhiteTmp);
+            return !(isSquareOccupied(middleSquare, chessPiecePositions, isWhiteTmp) && isWhiteTmp == isWhite)
+                   && !(isSquareOccupied(targetSquare, chessPiecePositions, isWhiteTmp) && isWhiteTmp == isWhite);
         } else if (rankMove == 1 && fileMove == 1) {
             bool isWhiteTmp;
             if (isSquareOccupied(targetSquare, chessPiecePositions, isWhiteTmp)) {

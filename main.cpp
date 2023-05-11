@@ -1,6 +1,6 @@
-#include "chessPiecesGeometry.h"
-#include "controls.h"
-#include "rules.h"
+#include "include/chessPiecesGeometry.h"
+#include "include/controls.h"
+#include "include/rules.h"
 #include <threepp/threepp.hpp>
 #include <threepp/controls/OrbitControls.hpp>
 #include <threepp/extras/imgui/imgui_context.hpp>
@@ -59,9 +59,10 @@ int main() {
         std::shared_ptr<threepp::Object3D> pickedChessPiece;
         std::string initialSquare;
         std::shared_ptr<threepp::Object3D> chessboard;
+        std::shared_ptr<Rules> chessRules;
 
 
-        std::string getSquareName(int column, int row) {
+        static std::string getSquareName(int column, int row) {
             const std::vector<char> columnNames{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
             return std::string(1, columnNames[column]) + std::to_string(8 - row);
         }
@@ -89,6 +90,7 @@ int main() {
             chessPiecePositions["E7"] = "chess_piece_black_pawn_4"; chessPiecePositions["D7"] = "chess_piece_black_pawn_5";
             chessPiecePositions["C7"] = "chess_piece_black_pawn_6"; chessPiecePositions["B7"] = "chess_piece_black_pawn_7";
             chessPiecePositions["A7"] = "chess_piece_black_pawn_8";
+            chessRules = std::make_shared<Rules>(); // Add this
         }
 
         void onMouseDown(int button, const Vector2 &pos) override {
@@ -182,9 +184,9 @@ int main() {
             } else {
                 std::string targetSquare = getSquareName(intersectedColumn, intersectedRow);
 
-                // If there is a picked chess piece and it's not the same square, place it on the intersected square
+                // If there is a picked chess piece, and it's not the same square, place it on the intersected square
                 if (pickedChessPiece->name != chessPieceName) {
-                    float targetX = boardStartX + intersectedColumn * squareSize - 3.5;
+                    float targetX = boardStartX + intersectedColumn * squareSize - 3.5f;
                     float targetZ = boardStartZ + intersectedRow * squareSize;
 
                     // Apply the offset for bishops, knights, and kings
@@ -237,16 +239,16 @@ int main() {
     canvas.addMouseListener(myListener.get());
 
     for (int i = 0; i < 8; ++i) {
-        auto whitePawn = std::make_shared<ChessPiecesGeometry::WhitePawn>();
+        auto whitePawn = std::make_shared<ChessPiecesGeometry::Pawn>(threepp::Color(1,1,1));
         whitePawn->getMesh()->name = "chess_piece_white_pawn_" + std::to_string(i + 1);
-        whitePawn->getMesh()->position.set(0.0f - i, 0, -2.5);
+        whitePawn->getMesh()->position.set(0 - i, 0.0, -2.5);
         whitePawn->getMesh()->scale.set(0.015, 0.015, 0.015);
         whitePawn->getMesh()->rotation.set(math::PI / -2, 0, 0);
         scene->add(whitePawn->getMesh());
     }
 
     for (int i = 0; i < 8; ++i) {
-        auto blackPawn = std::make_shared<ChessPiecesGeometry::BlackPawn>();
+        auto blackPawn = std::make_shared<ChessPiecesGeometry::Pawn>(threepp::Color(0,0,0));
         blackPawn->getMesh()->name = "chess_piece_black_pawn_" + std::to_string(i + 1);
         blackPawn->getMesh()->position.set(0.0f - i, 0, 2.5);
         blackPawn->getMesh()->scale.set(0.015, 0.015, 0.015);
@@ -254,97 +256,97 @@ int main() {
         scene->add(blackPawn->getMesh());
     }
 
-    auto whiteRook1 = std::make_shared<ChessPiecesGeometry::WhiteRook>();
+    auto whiteRook1 = std::make_shared<ChessPiecesGeometry::Rook>(threepp::Color(1,1,1));
     whiteRook1->getMesh()->name = "chess_piece_white_rook_1";
     whiteRook1->getMesh()->position.set(-6.4, 0.1, -3.5);
     whiteRook1->getMesh()->scale.set(0.015, 0.015, 0.015);
     whiteRook1->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    auto whiteRook2 = std::make_shared<ChessPiecesGeometry::WhiteRook>();
+    auto whiteRook2 = std::make_shared<ChessPiecesGeometry::Rook>(threepp::Color(1,1,1));
     whiteRook2->getMesh()->name = "chess_piece_white_rook_2";
     whiteRook2->getMesh()->position.set(0.65, 0.1, -3.5);
     whiteRook2->getMesh()->scale.set(0.015, 0.015, 0.015);
     whiteRook2->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    auto whiteKnight1 = std::make_shared<ChessPiecesGeometry::WhiteKnight>();
+    auto whiteKnight1 = std::make_shared<ChessPiecesGeometry::Knight>(threepp::Color(1,1,1));
     whiteKnight1->getMesh()->name = "chess_piece_white_knight_1";
     whiteKnight1->getMesh()->position.set(3.80, 0.1, -3.5);
     whiteKnight1->getMesh()->scale.set(0.015, 0.015, 0.015);
     whiteKnight1->getMesh()->rotation.set(math::PI/-2, 0, math::PI);
 
-    auto whiteKnight2 = std::make_shared<ChessPiecesGeometry::WhiteKnight>();
+    auto whiteKnight2 = std::make_shared<ChessPiecesGeometry::Knight>(threepp::Color(1,1,1));
     whiteKnight2->getMesh()->name = "chess_piece_white_knight_2";
     whiteKnight2->getMesh()->position.set(0.75, 0.1, -3.5);
     whiteKnight2->getMesh()->scale.set(0.015, 0.015, 0.015);
     whiteKnight2->getMesh()->rotation.set(math::PI/-2, 0, math::PI);
 
-    auto whiteBishop1 = std::make_shared<ChessPiecesGeometry::WhiteBishop>();
+    auto whiteBishop1 = std::make_shared<ChessPiecesGeometry::Bishop>(threepp::Color(1,1,1));
     whiteBishop1->getMesh()->name = "chess_piece_white_bishop_1";
     whiteBishop1->getMesh()->position.set(-4.20, 0.1, -3.5);
     whiteBishop1->getMesh()->scale.set(0.015, 0.015, 0.015);
     whiteBishop1->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    auto whiteBishop2 = std::make_shared<ChessPiecesGeometry::WhiteBishop>();
+    auto whiteBishop2 = std::make_shared<ChessPiecesGeometry::Bishop>(threepp::Color(1,1,1));
     whiteBishop2->getMesh()->name = "chess_piece_white_bishop_2";
     whiteBishop2->getMesh()->position.set(0.85, 0.1, -3.5);
     whiteBishop2->getMesh()->scale.set(0.015, 0.015, 0.015);
     whiteBishop2->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    auto whiteQueen = std::make_shared<ChessPiecesGeometry::WhiteQueen>();
+    auto whiteQueen = std::make_shared<ChessPiecesGeometry::Queen>(threepp::Color(1,1,1));
     whiteQueen->getMesh()->name = "chess_piece_white_queen";
     whiteQueen->getMesh()->position.set(0.18, 0.1, -3.5);
     whiteQueen->getMesh()->scale.set(0.015, 0.015, 0.015);
     whiteQueen->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    auto whiteKing = std::make_shared<ChessPiecesGeometry::WhiteKing>();
+    auto whiteKing = std::make_shared<ChessPiecesGeometry::King>(threepp::Color(1,1,1));
     whiteKing->getMesh()->name = "chess_piece_white_king";
     whiteKing->getMesh()->position.set(-1.55, 0.1, -3.5);
     whiteKing->getMesh()->scale.set(0.015, 0.015, 0.015);
     whiteKing->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    auto blackRook1 = std::make_shared<ChessPiecesGeometry::BlackRook>();
+    auto blackRook1 = std::make_shared<ChessPiecesGeometry::Rook>(threepp::Color(0,0,0));
     blackRook1->getMesh()->name = "chess_piece_black_rook_1";
     blackRook1->getMesh()->position.set(-6.4, 0.1, 3.5);
     blackRook1->getMesh()->scale.set(0.015, 0.015, 0.015);
     blackRook1->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    auto blackRook2 = std::make_shared<ChessPiecesGeometry::BlackRook>();
+    auto blackRook2 = std::make_shared<ChessPiecesGeometry::Rook>(threepp::Color(0,0,0));
     blackRook2->getMesh()->name = "chess_piece_black_rook_2";
     blackRook2->getMesh()->position.set(0.65, 0.1, 3.5);
     blackRook2->getMesh()->scale.set(0.015, 0.015, 0.015);
     blackRook2->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    auto blackKnight1 = std::make_shared<ChessPiecesGeometry::BlackKnight>();
+    auto blackKnight1 = std::make_shared<ChessPiecesGeometry::Knight>(threepp::Color(0,0,0));
     blackKnight1->getMesh()->name = "chess_piece_black_knight_1";
     blackKnight1->getMesh()->position.set(-0.75, 0.1, 3.5);
     blackKnight1->getMesh()->scale.set(0.015, 0.015, 0.015);
     blackKnight1->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    auto blackKnight2 = std::make_shared<ChessPiecesGeometry::BlackKnight>();
+    auto blackKnight2 = std::make_shared<ChessPiecesGeometry::Knight>(threepp::Color(0,0,0));
     blackKnight2->getMesh()->name = "chess_piece_black_knight_2";
     blackKnight2->getMesh()->position.set(-3.8, 0.1, 3.5);
     blackKnight2->getMesh()->scale.set(0.015, 0.015, 0.015);
     blackKnight2->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    auto blackBishop1 = std::make_shared<ChessPiecesGeometry::BlackBishop>();
+    auto blackBishop1 = std::make_shared<ChessPiecesGeometry::Bishop>(threepp::Color(0,0,0));
     blackBishop1->getMesh()->name = "chess_piece_black_bishop_1";
     blackBishop1->getMesh()->position.set(-4.20, 0.1, 3.5);
     blackBishop1->getMesh()->scale.set(0.015, 0.015, 0.015);
     blackBishop1->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    auto blackBishop2 = std::make_shared<ChessPiecesGeometry::BlackBishop>();
+    auto blackBishop2 = std::make_shared<ChessPiecesGeometry::Bishop>(threepp::Color(0,0,0));
     blackBishop2->getMesh()->name = "chess_piece_black_bishop_2";
     blackBishop2->getMesh()->position.set(0.85, 0.1, 3.5);
     blackBishop2->getMesh()->scale.set(0.015, 0.015, 0.015);
     blackBishop2->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    auto blackQueen = std::make_shared<ChessPiecesGeometry::BlackQueen>();
+    auto blackQueen = std::make_shared<ChessPiecesGeometry::Queen>(threepp::Color(0,0,0));
     blackQueen->getMesh()->name = "chess_piece_black_queen";
     blackQueen->getMesh()->position.set(0.18, 0.1, 3.5);
     blackQueen->getMesh()->scale.set(0.015, 0.015, 0.015);
     blackQueen->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
-    auto blackKing = std::make_shared<ChessPiecesGeometry::BlackKing>();
+    auto blackKing = std::make_shared<ChessPiecesGeometry::King>(threepp::Color(0,0,0));
     blackKing->getMesh()->name = "chess_piece_black_king";
     blackKing->getMesh()->position.set(-1.55, 0.1, 3.5);
     blackKing->getMesh()->scale.set(0.015, 0.015, 0.015);
