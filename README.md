@@ -3,10 +3,10 @@
 Dette er et program som gir muligheten til å spille sjakk mot noen andre på samme datamaskinen. Sjakkbrikkene og sjakkbrettet er fremstilt 3-dimensjonalt. For å visualiserer sjakkbrettet er det brukt et tredjepartsbibliotek kalt "threepp". 
 
 
-#Innholdsfortegnelse:
+## Innholdsfortegnelse:
 
 
-#Innstallasjon:
+## Innstallasjon:
 
 For å kunne bruke programmet på din maskin må du ha følgende installert:
 
@@ -17,7 +17,7 @@ Threepp - Dette er et tredjepartsbibliotek som blir brukt for visualisering av s
 Assimp - Dette blir brukt for å laste .stl filer som objekt.
 
 
-#Bruk:
+## Bruk:
 
 For å kunne programmet må du ha installert og konfigurert programmene ovenfor. Etter det er gjort kan du åpne prosjektet her å kjøre main.cpp filen. Det skal da poppe opp et vindu som vist under:
 ![Skjermbilde 2023-05-14 kl  17 30 05](https://github.com/AIS1002-Prosjektoppgave/AIS1002-ProsjektOppgave/assets/122883584/9613e134-5f4f-4d91-93a4-47d5d5e85dc0)
@@ -32,23 +32,50 @@ For å flytte brikkene kan du høyretrykke på ruten (eller direkte på brikken)
 NB! Grunnet mangel på tid, rakk vi ikke å fullføre programmet slik vi hadde tenkt. Vi har begynnt på en header som skal implementere reglene for hvordan sjakkbrikkene skal oppføre seg og at de kan slå ut andre sjakkbrikker. Men dette rakk vi altså ikke å fullføre. 
 
 
-#Dokumentasjon:
+## Dokumentasjon:
 
 Vcpkg - https://github.com/microsoft/vcpkg#documentation
 Threepp - https://github.com/AIS1002-OOP-V23/threepp
 Assimp - https://github.com/assimp/assimp
 
 
-#Feilsøking:
+## Feilsøking:
 
 Dersom en skal feilsøke programmet er det blant annet lagt til en tekst i konsollen når programmet kjører som viser hva raycasten (funksjonen som er brukt for å ta tak i brikker) treffer.
 
 Det er også laget egne tester som skal teste at programmet kjører slik det skal. Desse ligger i mappen "tests" og der kan du kjøre de forskjllige testen i tests.cpp for å teste at funksjoner som for eksempel: skaleringen på sjakkbrikkene er rett, at kalkuleringen av at brikken automatisk plasseres på midten av ruten er rett.
 
 
+## Lisens
 
-Vi har tatt utganspunkt i å lage 3D-sjakk i mappeinnleveringen vår. Vi har lagt ned en god andel timer så langt, og kommet greit igang. Vi har fått til en baseline der vi har hentet sjakkbrikker ved .stl filer og plassert disse på sjakkbrettet, samt lager ferdig utseende og det visuelle i forhold til sjakkspillet. Neste steg nå blir å implementere flytting av brikker, samt få lagt inn regler i sjakkspillet slik at det faktisk går ann å spille noe som helst. Det er mye jobb som gjenstår, men føler vi har kommet greit igang.
+Programmet krever ingen lisenser og kan brukes fritt frem av alle :)
 
-Når det kommer til selve kodingen har det blitt mye frem og tilbake, med prøving av forskjellige funksjoner der vi har måttet se ann hva som fungerer best. vi har også tatt utgagnspunkt i eksmepelkodene til threepp for å se hvordan koden eventuelt kan bygges opp. Sammen med dette har vi også brukt ressurser fra internett som god inspirasjon i koden, spesielt der vi har stått litt fast og kommet videre.
 
-Det er brukt forskjellige headers for å få til en mer oversiktlig kode
+## Skapere
+
+Kenneth Brenna
+Kandidat nummer: 10030
+
+Kevin Silbernagel
+Kandidat nummer 10033
+
+
+## Endringslogg
+
+### Versjon 1.1.0 (2023-06-15)
+Lagt til ny funksjon for avansert søk.
+Forbedret brukergrensesnittet med enklere navigasjon.
+Introduserte støtte for flere språk.
+Optimalisert algoritmer for raskere databehandling.
+
+### Versjon 1.2.0 (2023-08-10)
+Implementert automatisk oppdateringsfunksjonalitet.
+Lagt til mulighet for tilpassede temaer.
+Forbedret feilhåndtering og feilmeldinger for bedre brukervennlighet.
+Løst kjente problemer relatert til dataintegritet.
+
+### Versjon 2.0.0 (2023-12-01)
+Fullstendig omskrevet kodebase for bedre struktur og ytelse.
+Byttet til en ny database-backend for økt skalerbarhet.
+Introduserte avanserte rapporteringsfunksjoner.
+Lagt til støtte for tredjepartsintegreringer gjennom API.
