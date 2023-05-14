@@ -82,34 +82,31 @@ StackOverflow for å hente inspirasjon når vi har stått litt fast. Og med tank
 Merk at det jevnlig har blitt jobbet med koden. Slik at datoene er et notat på når endringene som vi gjorde i perioden mellom versjonene var såpass intuitivet at det gidde en nyere opplevelse av koden
 
 ### Versjon 1.1.0 (2023-02-27)
-1. Lagt til visning av sjakkbrett.
+- Lagt til visning av sjakkbrett.
 
-2. Lagt til grafisk fremstilling av sjakkbrikker.
+- Lagt til grafisk fremstilling av sjakkbrikker.
 
-3. Lagt til header for implementering av muskontroller.
+- Lagt til header for implementering av muskontroller.
 
 ### Versjon 1.1.1 (2023-03-28)
-1. Implementert rotering og zoom.
-
-2. Lagt til rett posisjonering av brikker.
-
-3. Lagt til tester.
-
-4. Lagt til implemntering av muskontroller.
+- Implementert rotering og zoom.
+- Lagt til rett posisjonering av brikker.
+- Lagt til tester.
+- Lagt til implemntering av muskontroller.
 
 ### Versjon 1.1.2 (2023-04-15)
-1. Fullstendig omskrevet kodebase for bedre struktur og ytelse.
+- Fullstendig omskrevet kodebase for bedre struktur og ytelse.
 
-2. Løst kjente problemer relatert til bruk av muskontroller.
+- Løst kjente problemer relatert til bruk av muskontroller.
 
-3. Lagt assimp som dependency.
+- Lagt assimp som dependency.
 
 ### Versjon 2.0.0 (2023-05-14)
-1. Lagt til kommentarer.
+- Lagt til kommentarer.
 
-2. Lagt til bedre struktur blant headers.
+- Lagt til bedre struktur blant headers.
 
-3. Lagt til flere tester.
+- Lagt til flere tester.
 
-4. Oppdatert README.
+- Oppdatert README.
 
