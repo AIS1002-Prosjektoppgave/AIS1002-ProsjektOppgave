@@ -19,11 +19,11 @@ Dette er tenkt å bli et program som gir muligheten til å spille sjakk mot noen
 
 For å kunne bruke programmet på din maskin må du ha følgende installert:
 
-Vcpkg - Dette er et åpent kildekodeprosjekt fra Microsoft som er en pakkehåndterer for C++-avhengigheter. Dette forenkler prosessen med å finne, installere og administrere tredjepartsbiblioteker og avhengigheter i C++-prosjekter.
+1. Vcpkg - Dette er et åpent kildekodeprosjekt fra Microsoft som er en pakkehåndterer for C++-avhengigheter. Dette forenkler prosessen med å finne, installere og administrere tredjepartsbiblioteker og avhengigheter i C++-prosjekter.
 
-Threepp - Dette er et tredjepartsbibliotek som blir brukt for visualisering av sjakkbrikker og sjakkbrett. Den blir også brukt for å definere hva musknapper og taster har for en funksjon.
+2. Threepp - Dette er et tredjepartsbibliotek som blir brukt for visualisering av sjakkbrikker og sjakkbrett. Den blir også brukt for å definere hva musknapper og taster har for en funksjon.
 
-Assimp - Dette blir brukt for å laste .stl filer som objekt.
+3. Assimp - Dette blir brukt for å laste .stl filer som objekt.
 
 
 ## Bruk:
