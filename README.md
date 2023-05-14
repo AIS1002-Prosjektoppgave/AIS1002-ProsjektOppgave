@@ -83,9 +83,7 @@ Merk at det jevnlig har blitt jobbet med koden. Slik at datoene er et notat på 
 
 ### Versjon 1.1.0 (2023-02-27)
 - Lagt til visning av sjakkbrett.
-
 - Lagt til grafisk fremstilling av sjakkbrikker.
-
 - Lagt til header for implementering av muskontroller.
 
 ### Versjon 1.1.1 (2023-03-28)
@@ -96,17 +94,12 @@ Merk at det jevnlig har blitt jobbet med koden. Slik at datoene er et notat på 
 
 ### Versjon 1.1.2 (2023-04-15)
 - Fullstendig omskrevet kodebase for bedre struktur og ytelse.
-
 - Løst kjente problemer relatert til bruk av muskontroller.
-
 - Lagt assimp som dependency.
 
 ### Versjon 2.0.0 (2023-05-14)
 - Lagt til kommentarer.
-
 - Lagt til bedre struktur blant headers.
-
 - Lagt til flere tester.
-
 - Oppdatert README.
 
