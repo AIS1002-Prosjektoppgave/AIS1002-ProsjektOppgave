@@ -7,10 +7,9 @@
 
 using namespace threepp;
 
-//Her legges det til posisjonene for sjakkbrikkene samt at det opprettes en scene med forskjllige kontroll innstillinger
-//Det er også inkludert en headeren controls.h for å legge til sjakkbrikke kontrollen
 int main() {
 
+    // oppsett av kamera, scene, canvas,kontroller osv.
     Canvas canvas;
     GLRenderer renderer(canvas);
     renderer.checkShaderErrors = true;
@@ -49,6 +48,7 @@ int main() {
         ImGui::End();
     });
 
+    //klasse for håndtering av museklikking og flytting av sjakkbrikkene
     struct MyListener : MouseListener {
 
         std::map<std::string, std::string> chessPiecePositions;
@@ -67,7 +67,7 @@ int main() {
             return std::string(1, columnNames[column]) + std::to_string(8 - row);
         }
 
-        // Modify the constructor to accept scene and camera
+        // tilegner hver egen sjakkbrikke deres egen sjakkrute ved oppstart
         explicit MyListener(std::shared_ptr<Controls> controlsPtr, std::shared_ptr<threepp::Scene> scene,
                             std::shared_ptr<threepp::Camera> camera, std::shared_ptr<Canvas> canvas)
                 : controlsPtr(std::move(controlsPtr)), scene_(std::move(scene)), listenerCamera_(std::move(camera)),
@@ -90,9 +90,10 @@ int main() {
             chessPiecePositions["E7"] = "chess_piece_black_pawn_4"; chessPiecePositions["D7"] = "chess_piece_black_pawn_5";
             chessPiecePositions["C7"] = "chess_piece_black_pawn_6"; chessPiecePositions["B7"] = "chess_piece_black_pawn_7";
             chessPiecePositions["A7"] = "chess_piece_black_pawn_8";
-            chessRules = std::make_shared<Rules>(); // Add this
+            chessRules = std::make_shared<Rules>();
         }
 
+        //håndtering av en situasjon der venstre musknapp blir trykt
         void onMouseDown(int button, const Vector2 &pos) override {
             if (button == 0) { // Left mouse button
                 controlsPtr->onMouseDown(pos);
@@ -109,13 +110,13 @@ int main() {
                 if (!intersects.empty()) {
                     const auto &intersection = intersects.front();
 
-                    // Only process mouse click on chess squares or chess pieces
+                    // Bare gå videre om museklikk er på sjakkbrettet eller en sjakkbrikke.
                     if (ChessboardGeometry::chessSquares.find(intersection.object->name) != ChessboardGeometry::chessSquares.end() ||
                         chessPiecePositions.find(intersection.object->name) != chessPiecePositions.end()) {
-                        processMouseClick(intersection, listenerCamera_, scene_);
+                        processMouseClick(intersection, scene_);
                     }
                 } else {
-                    // Deselect the picked chess piece if clicking outside the board
+                    // Fjern valgt sjakkbrikke om nytt museklikk er utenfor sjakkbrettet
                     if (pickedChessPiece) {
                         pickedChessPiece->position.y -= 50;
                         pickedChessPiece.reset();
@@ -124,34 +125,33 @@ int main() {
             }
         }
 
-        void processMouseClick(const Intersection &intersect, std::shared_ptr<threepp::Camera> &camera_,
-                               std::shared_ptr<threepp::Scene> &scene_) {
+        void processMouseClick(const Intersection &intersect, std::shared_ptr<threepp::Scene> &scene_) {
 
             std::cout << "Intersected object name: " << intersect.object->name << std::endl;
             const float squareSize = 1.0;
             const float boardStartX = 0.5;
             const float boardStartZ = -3.5;
 
-            // Calculate the index of the intersected square
+            // Kalkulerer indeksen til ruta som blir truffet av raycaster
             int intersectedColumn = static_cast<int>(std::round((intersect.point.x - boardStartX) / squareSize));
             int intersectedRow = static_cast<int>(std::round((intersect.point.z - boardStartZ) / squareSize));
 
-            // Get the name of the square
+            // Henter navnet til den aktuelle ruta.
             std::string squareName = getSquareName(intersectedColumn, intersectedRow);
 
-            // Check if the intersected object is a chess piece
+            // Sjekker om objekter som ble truffet er en sjakkbrikke
             if (chessPiecePositions.find(intersect.object->name) != chessPiecePositions.end()) {
                 squareName = intersect.object->name;
             }
 
-            // Find the chess piece on the intersected square
+            // Finner ut hvilken sjakkbrikke som ble truffet
             auto it = chessPiecePositions.find(squareName);
             std::string chessPieceName;
             if (it != chessPiecePositions.end()) {
                 chessPieceName = it->second;
             }
 
-            // Find the chess piece in the chessPiecePositions map
+            // Finner posisjonen til den aktuelle sjakkbrikkken
             std::function<void(std::shared_ptr<threepp::Object3D>)> findChessPiece = [this, &chessPieceName](
                     std::shared_ptr<threepp::Object3D> object) mutable {
                 while (object) {
@@ -170,26 +170,26 @@ int main() {
             std::cout << "Chess piece on the intersected square: " << chessPieceName << std::endl;
             if (!pickedChessPiece) {
 
-                // If there is no picked chess piece, pick up the chess piece on the intersected square
+                // Om det allerede ike er valgt noen sjakkbrikke, plukk opp sjakkbrikken på den aktuelle ruta som ble truffet
                 if (!chessPieceName.empty()) {
                     pickedChessPiece = std::shared_ptr<threepp::Object3D>(scene_->getObjectByName(chessPieceName),
                                                                           [](threepp::Object3D *) {});
-                    // Raise the picked chess piece to make it "invisible"
+                    // Løfter opp sjakkbrikken for å gjøre den "usynlig"
                     pickedChessPiece->position.y += 50;
 
-                    // Remember the initial square of the picked chess piece
+                    // Husker den opprinnelige ruta til sjakkbrikken
                     initialSquare = intersect.object->name;
                 }
 
             } else {
                 std::string targetSquare = getSquareName(intersectedColumn, intersectedRow);
 
-                // If there is a picked chess piece, and it's not the same square, place it on the intersected square
+                // Om en sjakkbrikke er valgt, plasser den på den nye, utvalgte ruta som blir truffet av raycaster.
                 if (pickedChessPiece->name != chessPieceName) {
                     float targetX = boardStartX + intersectedColumn * squareSize - 3.5f;
                     float targetZ = boardStartZ + intersectedRow * squareSize;
 
-                    // Apply the offset for bishops, knights, and kings
+                    // Må ha en offset på de fleste brikkene for at posisjon skal bli riktig.
                     if (pickedChessPiece->name == "chess_piece_black_bishop_1" ||
                         pickedChessPiece->name == "chess_piece_black_bishop_2" ||
                         pickedChessPiece->name == "chess_piece_white_bishop_1" ||
@@ -212,22 +212,22 @@ int main() {
                     pickedChessPiece->position.x = targetX;
                     pickedChessPiece->position.z = targetZ;
 
-                    // Lower the picked chess piece back to its original height
+                    // Senk sjakkbrikken til original posisjon.
                     pickedChessPiece->position.y -= 50;
 
-                    // Update the chessPiecePositions map
+                    // Oppdatere chessPiecePositions map'en.
                     if (!chessPieceName.empty()) {
-                        chessPiecePositions.erase(targetSquare); // Remove the chess piece at the target
-                        scene_->remove(scene_->getObjectByName(chessPieceName)); // Remove the captured piece from the scene
+                        chessPiecePositions.erase(targetSquare); // Fjerner brikken fra ruta
+                        scene_->remove(scene_->getObjectByName(chessPieceName)); // Fjerner brikken fra scenen.
                     }
 
                     chessPiecePositions[targetSquare] = pickedChessPiece->name;
 
-                    // Remove the picked chess piece from its old position in the map
+                    // Fjern den valgte brikken fra den gamle posisjonen i map'en.
                     if (initialSquare != targetSquare) {
                         chessPiecePositions.erase(initialSquare);
                     }
-                    // Clear the picked chess piece and initial square
+                    // Reset valgt brikke og riginal rute.
                     pickedChessPiece.reset();
                     initialSquare = "";
                 }
@@ -235,15 +235,15 @@ int main() {
         }
     };
 
+    //legger til mouselistener i scenen
     auto myListener = std::make_shared<MyListener>(controlsPtr, scene, camera, std::shared_ptr<Canvas>(&canvas, [](Canvas*){}));
     canvas.addMouseListener(myListener.get());
 
+    //Legger til alle sjakkbrikker til scenen, samt redigerer deres attributer.
     for (int i = 0; i < 8; ++i) {
         auto whitePawn = std::make_shared<ChessPiecesGeometry::Pawn>(threepp::Color(1,1,1));
         whitePawn->getMesh()->name = "chess_piece_white_pawn_" + std::to_string(i + 1);
         whitePawn->getMesh()->position.set(0 - i, 0.0, -2.5);
-        whitePawn->getMesh()->scale.set(0.015, 0.015, 0.015);
-        whitePawn->getMesh()->rotation.set(math::PI / -2, 0, 0);
         scene->add(whitePawn->getMesh());
     }
 
@@ -251,106 +251,74 @@ int main() {
         auto blackPawn = std::make_shared<ChessPiecesGeometry::Pawn>(threepp::Color(0,0,0));
         blackPawn->getMesh()->name = "chess_piece_black_pawn_" + std::to_string(i + 1);
         blackPawn->getMesh()->position.set(0.0f - i, 0, 2.5);
-        blackPawn->getMesh()->scale.set(0.015, 0.015, 0.015);
-        blackPawn->getMesh()->rotation.set(math::PI / -2, 0, 0);
         scene->add(blackPawn->getMesh());
     }
 
     auto whiteRook1 = std::make_shared<ChessPiecesGeometry::Rook>(threepp::Color(1,1,1));
     whiteRook1->getMesh()->name = "chess_piece_white_rook_1";
     whiteRook1->getMesh()->position.set(-6.4, 0.1, -3.5);
-    whiteRook1->getMesh()->scale.set(0.015, 0.015, 0.015);
-    whiteRook1->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     auto whiteRook2 = std::make_shared<ChessPiecesGeometry::Rook>(threepp::Color(1,1,1));
     whiteRook2->getMesh()->name = "chess_piece_white_rook_2";
     whiteRook2->getMesh()->position.set(0.65, 0.1, -3.5);
-    whiteRook2->getMesh()->scale.set(0.015, 0.015, 0.015);
-    whiteRook2->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     auto whiteKnight1 = std::make_shared<ChessPiecesGeometry::Knight>(threepp::Color(1,1,1));
     whiteKnight1->getMesh()->name = "chess_piece_white_knight_1";
     whiteKnight1->getMesh()->position.set(3.80, 0.1, -3.5);
-    whiteKnight1->getMesh()->scale.set(0.015, 0.015, 0.015);
     whiteKnight1->getMesh()->rotation.set(math::PI/-2, 0, math::PI);
 
     auto whiteKnight2 = std::make_shared<ChessPiecesGeometry::Knight>(threepp::Color(1,1,1));
     whiteKnight2->getMesh()->name = "chess_piece_white_knight_2";
     whiteKnight2->getMesh()->position.set(0.75, 0.1, -3.5);
-    whiteKnight2->getMesh()->scale.set(0.015, 0.015, 0.015);
     whiteKnight2->getMesh()->rotation.set(math::PI/-2, 0, math::PI);
 
     auto whiteBishop1 = std::make_shared<ChessPiecesGeometry::Bishop>(threepp::Color(1,1,1));
     whiteBishop1->getMesh()->name = "chess_piece_white_bishop_1";
     whiteBishop1->getMesh()->position.set(-4.20, 0.1, -3.5);
-    whiteBishop1->getMesh()->scale.set(0.015, 0.015, 0.015);
-    whiteBishop1->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     auto whiteBishop2 = std::make_shared<ChessPiecesGeometry::Bishop>(threepp::Color(1,1,1));
     whiteBishop2->getMesh()->name = "chess_piece_white_bishop_2";
     whiteBishop2->getMesh()->position.set(0.85, 0.1, -3.5);
-    whiteBishop2->getMesh()->scale.set(0.015, 0.015, 0.015);
-    whiteBishop2->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     auto whiteQueen = std::make_shared<ChessPiecesGeometry::Queen>(threepp::Color(1,1,1));
     whiteQueen->getMesh()->name = "chess_piece_white_queen";
     whiteQueen->getMesh()->position.set(0.18, 0.1, -3.5);
-    whiteQueen->getMesh()->scale.set(0.015, 0.015, 0.015);
-    whiteQueen->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     auto whiteKing = std::make_shared<ChessPiecesGeometry::King>(threepp::Color(1,1,1));
     whiteKing->getMesh()->name = "chess_piece_white_king";
     whiteKing->getMesh()->position.set(-1.55, 0.1, -3.5);
-    whiteKing->getMesh()->scale.set(0.015, 0.015, 0.015);
-    whiteKing->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     auto blackRook1 = std::make_shared<ChessPiecesGeometry::Rook>(threepp::Color(0,0,0));
     blackRook1->getMesh()->name = "chess_piece_black_rook_1";
     blackRook1->getMesh()->position.set(-6.4, 0.1, 3.5);
-    blackRook1->getMesh()->scale.set(0.015, 0.015, 0.015);
-    blackRook1->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     auto blackRook2 = std::make_shared<ChessPiecesGeometry::Rook>(threepp::Color(0,0,0));
     blackRook2->getMesh()->name = "chess_piece_black_rook_2";
     blackRook2->getMesh()->position.set(0.65, 0.1, 3.5);
-    blackRook2->getMesh()->scale.set(0.015, 0.015, 0.015);
-    blackRook2->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     auto blackKnight1 = std::make_shared<ChessPiecesGeometry::Knight>(threepp::Color(0,0,0));
     blackKnight1->getMesh()->name = "chess_piece_black_knight_1";
     blackKnight1->getMesh()->position.set(-0.75, 0.1, 3.5);
-    blackKnight1->getMesh()->scale.set(0.015, 0.015, 0.015);
-    blackKnight1->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     auto blackKnight2 = std::make_shared<ChessPiecesGeometry::Knight>(threepp::Color(0,0,0));
     blackKnight2->getMesh()->name = "chess_piece_black_knight_2";
     blackKnight2->getMesh()->position.set(-3.8, 0.1, 3.5);
-    blackKnight2->getMesh()->scale.set(0.015, 0.015, 0.015);
-    blackKnight2->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     auto blackBishop1 = std::make_shared<ChessPiecesGeometry::Bishop>(threepp::Color(0,0,0));
     blackBishop1->getMesh()->name = "chess_piece_black_bishop_1";
     blackBishop1->getMesh()->position.set(-4.20, 0.1, 3.5);
-    blackBishop1->getMesh()->scale.set(0.015, 0.015, 0.015);
-    blackBishop1->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     auto blackBishop2 = std::make_shared<ChessPiecesGeometry::Bishop>(threepp::Color(0,0,0));
     blackBishop2->getMesh()->name = "chess_piece_black_bishop_2";
     blackBishop2->getMesh()->position.set(0.85, 0.1, 3.5);
-    blackBishop2->getMesh()->scale.set(0.015, 0.015, 0.015);
-    blackBishop2->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     auto blackQueen = std::make_shared<ChessPiecesGeometry::Queen>(threepp::Color(0,0,0));
     blackQueen->getMesh()->name = "chess_piece_black_queen";
     blackQueen->getMesh()->position.set(0.18, 0.1, 3.5);
-    blackQueen->getMesh()->scale.set(0.015, 0.015, 0.015);
-    blackQueen->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     auto blackKing = std::make_shared<ChessPiecesGeometry::King>(threepp::Color(0,0,0));
     blackKing->getMesh()->name = "chess_piece_black_king";
     blackKing->getMesh()->position.set(-1.55, 0.1, 3.5);
-    blackKing->getMesh()->scale.set(0.015, 0.015, 0.015);
-    blackKing->getMesh()->rotation.set(math::PI/-2, 0, 0);
 
     scene->add(blackKing->getMesh());
     scene->add(blackQueen->getMesh());
@@ -369,7 +337,7 @@ int main() {
     scene->add(whiteKing->getMesh());
     scene->add(whiteQueen->getMesh());
 
-
+    //Konfigurering av riktige muskoordinater
     Vector2 mouse{-Infinity<float>, -Infinity<float>};
     MouseMoveListener l([&](Vector2 pos) {
         auto size = canvas.getSize();
