@@ -1,12 +1,12 @@
-AIS1002 Prosjektoppgave - 3D Sjakk
+#AIS1002 Prosjektoppgave - 3D Sjakk
 
 Dette er et program som gir muligheten til å spille sjakk mot noen andre på samme datamaskinen. Sjakkbrikkene og sjakkbrettet er fremstilt 3-dimensjonalt. For å visualiserer sjakkbrettet er det brukt et tredjepartsbibliotek kalt "threepp". 
 
 
-Innholdsfortegnelse:
+#Innholdsfortegnelse:
 
 
-Innstallasjon:
+#Innstallasjon:
 
 For å kunne bruke programmet på din maskin må du ha følgende installert:
 
@@ -17,7 +17,7 @@ Threepp - Dette er et tredjepartsbibliotek som blir brukt for visualisering av s
 Assimp - Dette blir brukt for å laste .stl filer som objekt.
 
 
-Bruk:
+#Bruk:
 
 For å kunne programmet må du ha installert og konfigurert programmene ovenfor. Etter det er gjort kan du åpne prosjektet her å kjøre main.cpp filen. Det skal da poppe opp et vindu som vist under:
 ![Skjermbilde 2023-05-14 kl  17 30 05](https://github.com/AIS1002-Prosjektoppgave/AIS1002-ProsjektOppgave/assets/122883584/9613e134-5f4f-4d91-93a4-47d5d5e85dc0)
@@ -32,14 +32,14 @@ For å flytte brikkene kan du høyretrykke på ruten (eller direkte på brikken)
 NB! Grunnet mangel på tid, rakk vi ikke å fullføre programmet slik vi hadde tenkt. Vi har begynnt på en header som skal implementere reglene for hvordan sjakkbrikkene skal oppføre seg og at de kan slå ut andre sjakkbrikker. Men dette rakk vi altså ikke å fullføre. 
 
 
-Dokumentasjon:
+#Dokumentasjon:
 
 Vcpkg - https://github.com/microsoft/vcpkg#documentation
 Threepp - https://github.com/AIS1002-OOP-V23/threepp
 Assimp - https://github.com/assimp/assimp
 
 
-Feilsøking:
+#Feilsøking:
 
 Dersom en skal feilsøke programmet er det blant annet lagt til en tekst i konsollen når programmet kjører som viser hva raycasten (funksjonen som er brukt for å ta tak i brikker) treffer.
 
