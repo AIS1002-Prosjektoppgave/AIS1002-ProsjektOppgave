@@ -43,9 +43,11 @@ NB! Grunnet mangel på tid, rakk vi ikke å fullføre programmet slik vi hadde t
 
 ## Dokumentasjon:
 
-Vcpkg - https://github.com/microsoft/vcpkg#documentation
-Threepp - https://github.com/AIS1002-OOP-V23/threepp
-Assimp - https://github.com/assimp/assimp
+1. Vcpkg - https://github.com/microsoft/vcpkg#documentation
+
+2. Threepp - https://github.com/AIS1002-OOP-V23/threepp
+
+3. Assimp - https://github.com/assimp/assimp
 
 
 ## Feilsøking:
