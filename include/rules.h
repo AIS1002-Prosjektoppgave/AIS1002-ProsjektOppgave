@@ -6,8 +6,12 @@
 #include <cmath>
 #include <algorithm>
 
+
+//Har ikke implementert noe fra denne header-filen i koden vår enda, dette er så langt vi kom.
+//Neste skritt ville vært å fortsette med denne delen av koden.
 class Rules {
 public:
+    //Funksjon for å reurner om en "move" er lovlig for en valgt brikke
     static bool isValidMove(const std::string &pieceName, const std::string &initialSquare, const std::string &targetSquare, const std::map<std::string, std::string> &chessPiecePositions) {
         if (!isWithinBoard(initialSquare) || !isWithinBoard(targetSquare)) {
             return false;
@@ -140,6 +144,7 @@ public:
         return false;
     }
 
+    //Sjekker om ny rute er opptatt eller ikke
     static bool isSquareOccupied(const std::string &square, const std::map<std::string, std::string> &chessPiecePositions, bool &isWhite) {
         auto pieceIter = chessPiecePositions.find(square);
         if (pieceIter != chessPiecePositions.end()) {
@@ -149,6 +154,7 @@ public:
         return false;
     }
 
+    //Sjekker om aktuell rute er innenfor sjakkbrettet
     static bool isWithinBoard(const std::string &square) {
         if (square.size() != 2) {
             return false;

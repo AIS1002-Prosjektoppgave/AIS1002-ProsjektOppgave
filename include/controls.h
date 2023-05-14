@@ -23,7 +23,7 @@ class Controls {
 public:
     Controls(std::shared_ptr<PerspectiveCamera> &camera, Canvas &canvas, std::shared_ptr<Scene> scene)
             : camera_(camera), canvas_(&canvas), scene_(std::move(scene)) {
-        // Find the chessboard mesh
+        // Finner chessboard-meshen
         for (const auto &object: scene_->children) {
             if (object->name == "chessboard") {
                 chessboard_ = object;
@@ -127,7 +127,7 @@ public:
         }
         else if (intersectedSquare && selectDestination_) {
             ChessboardGeometry cbg;
-            Vector3 nearestSquarePosition = cbg.getNearestSquare(intersectedSquare->position);
+            Vector3 nearestSquarePosition = ChessboardGeometry::getNearestSquare(intersectedSquare->position);
             moveSelectedMeshTo(nearestSquarePosition);
             std::cout << "Moved mesh " << selectedRawMesh_->name << " to the new position" << std::endl;
             resetSelectedPieceState();
@@ -136,13 +136,28 @@ public:
         }
     }
 
-
-    void moveSelectedMeshTo(const threepp::Vector3 &newPosition) {
+    void moveSelectedMeshTo(const threepp::Vector3 &newPosition) const {
         if (selectedRawMesh_) {
             selectedRawMesh_->position.set(newPosition.x, selectedMeshOriginalPosition_.y, newPosition.z);
         }
     }
 
+    // Getter-funksjon for private medlemer:
+    [[nodiscard]] bool getMouseDown() const {
+        return mouseDown_;
+    }
+
+    [[nodiscard]] Vector3 getSelectedMeshOriginalPosition() const {
+        return selectedMeshOriginalPosition_;
+    }
+
+    [[nodiscard]] std::shared_ptr<threepp::Line> getRayLine() const {
+        return rayLine_;
+    }
+
+    [[nodiscard]] bool getSelectDestination() const {
+        return selectDestination_;
+    }
 
 private:
     std::shared_ptr<threepp::Line> rayLine_;

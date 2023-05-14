@@ -5,17 +5,16 @@
 
 using namespace threepp;
 
-// Chessboard geometry
 class ChessboardGeometry {
 public:
     static std::shared_ptr<Object3D> create() {
         auto board = Object3D::create();
 
-        // Create the chessboard mesh
+        // Oppretter chessboard-meshen
         auto whiteMaterial = MeshBasicMaterial::create();
-        whiteMaterial->color = Color(0xd2b48c); // set to light wooden color
+        whiteMaterial->color = Color(0xd2b48c);
 
-        // Create the black square mesh
+        // Lager meshen for de svarte rutene
         auto blackMaterial = MeshBasicMaterial::create();
         blackMaterial->color = Color(0x5D5346);
 
@@ -49,16 +48,16 @@ public:
         return board;
     }
 
+    //finner nærmeste rute ved et museklikk
     static Vector3 getNearestSquare(const Vector3 &position) {
-        // Find the nearest square on the chessboard for the given position.
-        float squareSize = 1.0f; // Adjust this value to match your actual chessboard square size.
+        float squareSize = 1.0f;
         float halfSquareSize = squareSize / 2.0f;
         float boardSize = 8 * squareSize;
 
         float x = std::round((position.x + boardSize / 2.0f - halfSquareSize) / squareSize) * squareSize - boardSize / 2.0f + halfSquareSize;
         float z = std::round((position.z + boardSize / 2.0f - halfSquareSize) / squareSize) * squareSize - boardSize / 2.0f + halfSquareSize;
 
-        return Vector3(x, position.y, z);
+        return {x, position.y, z};
     }
 
     static std::map<std::string, std::shared_ptr<Mesh>> chessSquares;
