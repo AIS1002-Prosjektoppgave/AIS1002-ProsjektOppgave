@@ -43,7 +43,7 @@ Assimp - https://github.com/assimp/assimp
 
 Dersom en skal feilsøke programmet er det blant annet lagt til en tekst i konsollen når programmet kjører som viser hva raycasten (funksjonen som er brukt for å ta tak i brikker) treffer.
 
-Det er også laget egne tester som skal teste at programmet kjører slik det skal. Desse ligger i mappen "tests" og der kan du kjøre de forskjllige testen i tests.cpp for å teste at funksjoner som for eksempel: skaleringen på sjakkbrikkene er rett, at kalkuleringen av at brikken automatisk plasseres på midten av ruten er rett.
+Det er også laget egne tester som skal teste at programmet kjører slik det skal. Desse ligger i mappen "tests" og der kan du kjøre de forskjllige testen i tests.cpp for å teste at funksjoner som for eksempel: skaleringen på sjakkbrikkene er rett, at kalkuleringen av at brikken automatisk plasseres på midten av ruten er rett. Vi har valgt bruke Catch2 som test ramme.
 
 
 ## Lisens
@@ -53,29 +53,41 @@ Programmet krever ingen lisenser og kan brukes fritt frem av alle :)
 
 ## Skapere
 
-Kenneth Brenna
+*************************
 Kandidat nummer: 10030
 
-Kevin Silbernagel
+*************************
 Kandidat nummer 10033
 
 
 ## Endringslogg
 
-### Versjon 1.1.0 (2023-06-15)
-Lagt til ny funksjon for avansert søk.
-Forbedret brukergrensesnittet med enklere navigasjon.
-Introduserte støtte for flere språk.
-Optimalisert algoritmer for raskere databehandling.
+Merk at det jevnlig har blitt jobbet med koden. Slik at datoene er et notat på når endringene som vi gjorde i perioden mellom versjonene var såpass intuitivet at det gidde en nyere opplevelse av koden
 
-### Versjon 1.2.0 (2023-08-10)
-Implementert automatisk oppdateringsfunksjonalitet.
-Lagt til mulighet for tilpassede temaer.
-Forbedret feilhåndtering og feilmeldinger for bedre brukervennlighet.
-Løst kjente problemer relatert til dataintegritet.
+### Versjon 1.1.0 (2023-02-27)
+Lagt til visning av sjakkbrett.
+Lagt til grafisk fremstilling av sjakkbrikker.
+Lagt til header for implementering av muskontroller.
 
-### Versjon 2.0.0 (2023-12-01)
+### Versjon 1.1.1 (2023-03-28)
+Implementert rotering og zoom.
+Lagt til rett posisjonering av brikker.
+Lagt til tester.
+Lagt til implemntering av muskontroller.
+
+### Versjon 1.1.2 (2023-04-15)
 Fullstendig omskrevet kodebase for bedre struktur og ytelse.
-Byttet til en ny database-backend for økt skalerbarhet.
-Introduserte avanserte rapporteringsfunksjoner.
-Lagt til støtte for tredjepartsintegreringer gjennom API.
+Løst kjente problemer relatert til bruk av muskontroller.
+Lagt assimp som dependency.
+
+### Versjon 1.2.0 (2023-04-15)
+Fullstendig omskrevet kodebase for bedre struktur og ytelse.
+Løst kjente problemer relatert til bruk av muskontroller.
+Lagt assimp som dependency.
+
+### Versjon 2.0.0 (2023-05-14)
+Lagt til kommentarer.
+Lagt til bedre struktur blant headers.
+Lagt til flere tester.
+Oppdatert README
+
