@@ -1,9 +1,18 @@
 # AIS1002 Prosjektoppgave - 3D Sjakk
 
-Dette er et program som gir muligheten til å spille sjakk mot noen andre på samme datamaskinen. Sjakkbrikkene og sjakkbrettet er fremstilt 3-dimensjonalt. For å visualiserer sjakkbrettet er det brukt et tredjepartsbibliotek kalt "threepp". 
+Dette er tenkt å bli et program som gir muligheten til å spille sjakk mot noen andre på samme datamaskinen.Men grunnet mengel på tid rakk vi dessverre ikke å fullføre dette. Det har gått mye tid på feilsøking. Sjakkbrikkene og sjakkbrettet er fremstilt 3-dimensjonalt. For å visualiserer sjakkbrettet er det brukt et tredjepartsbibliotek kalt "threepp". 
 
 
 ## Innholdsfortegnelse:
+
+1. Installsjon
+2. Bruk av programmet
+3. Dokumentasjon
+4. Feilsøking
+5. Lisens
+6. Skapere
+7. Kilder
+8. Endringslogg
 
 
 ## Innstallasjon:
@@ -55,9 +64,15 @@ Programmet krever ingen lisenser og kan brukes fritt frem av alle :)
 
 *************************
 Kandidat nummer: 10030
-
 *************************
 Kandidat nummer 10033
+*************************
+
+## Kilder
+
+ChatGPT for å få nærmere forklaring og eksempelkoder på ting vi lurte på. Denne har også vert til god hjelp ved feilsøking av diverse ting.
+
+StackOverflow for å hente inspirasjon når vi har stått litt fast. Og med tanke på struktureringen av koden.
 
 
 ## Endringslogg
@@ -80,14 +95,9 @@ Fullstendig omskrevet kodebase for bedre struktur og ytelse.
 Løst kjente problemer relatert til bruk av muskontroller.
 Lagt assimp som dependency.
 
-### Versjon 1.2.0 (2023-04-15)
-Fullstendig omskrevet kodebase for bedre struktur og ytelse.
-Løst kjente problemer relatert til bruk av muskontroller.
-Lagt assimp som dependency.
-
 ### Versjon 2.0.0 (2023-05-14)
 Lagt til kommentarer.
 Lagt til bedre struktur blant headers.
 Lagt til flere tester.
-Oppdatert README
+Oppdatert README.
 
