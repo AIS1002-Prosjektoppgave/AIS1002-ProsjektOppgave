@@ -1,4 +1,4 @@
-#AIS1002 Prosjektoppgave - 3D Sjakk
+# AIS1002 Prosjektoppgave - 3D Sjakk
 
 Dette er et program som gir muligheten til å spille sjakk mot noen andre på samme datamaskinen. Sjakkbrikkene og sjakkbrettet er fremstilt 3-dimensjonalt. For å visualiserer sjakkbrettet er det brukt et tredjepartsbibliotek kalt "threepp". 
 
